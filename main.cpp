@@ -1,24 +1,40 @@
 #include <SFML/Graphics.hpp>
 
+using namespace sf;
+
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+   // Window
+   RenderWindow window(VideoMode(640, 480), "TURTIX", Style::Titlebar | Style::Close);
+   Event ev;
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+   // Game loop
+   while (window.isOpen())
+   {
+      // Event handling
+      while (window.pollEvent(ev))
+      {
+         switch (ev.type)
+         {
+         case Event::Closed:
+            window.close();
+            break;
 
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
+         case Event::KeyPressed:
+            if (ev.key.code == Keyboard::Escape)
+               window.close();
+            break;
+            ;
+         }
+      }
 
-    return 0;
+      // Update
+
+      // Render
+      window.clear(Color(0,0,0));
+      // Draw your game
+      window.display();
+   }
+
+   return 0;
 }
