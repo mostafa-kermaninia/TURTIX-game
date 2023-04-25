@@ -1,40 +1,24 @@
-#include <SFML/Graphics.hpp>
-
-using namespace sf;
+#include <iostream>
+#include "Game.h"
 
 int main()
 {
-   // Window
-   RenderWindow window(VideoMode(640, 480), "TURTIX", Style::Titlebar | Style::Close);
-   Event ev;
+    // Init srand
+    std::srand(static_cast<unsigned>(time(NULL)));
 
-   // Game loop
-   while (window.isOpen())
-   {
-      // Event handling
-      while (window.pollEvent(ev))
-      {
-         switch (ev.type)
-         {
-         case Event::Closed:
-            window.close();
-            break;
 
-         case Event::KeyPressed:
-            if (ev.key.code == Keyboard::Escape)
-               window.close();
-            break;
-            ;
-         }
-      }
+    // init Game engine
+    Game game;
+    
+    // Game loop
+    while (game.running())
+    {
+        // Update
+       
+        game.update();
+        // Render
+        game.render();
+    }
 
-      // Update
-
-      // Render
-      window.clear(Color(0,0,0));
-      // Draw your game
-      window.display();
-   }
-
-   return 0;
+    return 0;
 }
