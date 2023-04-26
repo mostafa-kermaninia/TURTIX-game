@@ -1,68 +1,58 @@
 #include "Map.h"
 
 // PRIVATE FUNCS
+void Map::initMoves()
+{
+    moves = {sf::Vector2f(0.f, 700.f),
+             sf::Vector2f(204.f, 700.f),
+             sf::Vector2f(408.f, 700.f),
+             sf::Vector2f(612.f, 700.f),
+             sf::Vector2f(816.f, 700.f),
+             sf::Vector2f(1020.f, 700.f),
+             sf::Vector2f(1224.f, 700.f)};
+}
 void Map::initTexture()
 {
     // LOAD TEXTURE FROM FILE
-    if (!texture.loadFromFile("Textures/mainChar.png"))
+    if (!texture.loadFromFile("Textures/ground.png"))
     {
         std::cout << "ERROR::PLAYER::INITTEXTURE:: FILE RO NASHOD BEKHUNAMMMM!!! " << std::endl;
     }
 }
-void Map::initSprite()
+void Map::initSprites()
 {
-    // SET TEXTURE TO SPRITE
-    sprite.setTexture(texture);
+    for (int i = 0; i < moves.size(); i++)
+    {
+        // SET TEXTURE TO SPRITE
+        sf::Sprite curSp;
+        curSp.setTexture(texture);
+        // Resize sprite
+        curSp.scale(0.2f, 0.2f);
+        curSp.move(moves[i]);
+        sprites.push_back(curSp);
+    }
+}
 
-    // Resize sprite
-    sprite.setOrigin((sf::Vector2f)texture.getSize() / 2.f);
-    sprite.move(WINDOWWIDTH / 10.f, WINDOWHEIGHT / 2.f);
-    sprite.scale(0.2f, 0.2f);
+void Map::moveToPos(int xMove, int yMove, sf::Sprite &sprite)
+{
+    sprite.move(xMove, yMove);
 }
 
 Map::Map()
 {
-    movementSpeed = 1.f;
-    playerDir = RIGHT;
     initTexture();
-    initSprite();
+    initMoves();
+    initSprites();
 }
 Map::~Map()
 {
 }
 
 // FUNCS
-
-void Map::move(const float dirX, const float dirY)
-{
-    sprite.move(movementSpeed * dirX, movementSpeed * dirY);
-}
-
-void Map::goBack()
-{
-    playerDir *= -1;
-    sprite.scale(-1.f, 1.f);
-}
-
-void Map::update()
-{
-}
-
 void Map::render(sf::RenderTarget &target)
 {
-    target.draw(sprite);
-}
-
-int Map::getDir()
-{
-    return playerDir;
-}
-
-bool Map::collided(sf::Sprite target)
-{
-    if (sprite.getGlobalBounds().intersects(target.getGlobalBounds()))
+    for (sf::Sprite s : sprites)
     {
-        return true;
+        target.draw(s);
     }
-    return false;
 }

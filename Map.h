@@ -6,33 +6,31 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <string>
-const int WINDOWHEIGHT = 800;
-const int WINDOWWIDTH = 1300;
-const int RIGHT = 1;
-const int LEFT = -1;
+#include <vector>
+#define WINDOWHEIGHT 800
+#define WINDOWWIDTH 1300
+#define RIGHT 1
+#define LEFT -1
+
 class Map
 {
 private:
     sf::Texture texture;
-    sf::Sprite sprite;
+    std::vector<sf::Sprite> sprites;
+    std::vector<sf::Vector2f> moves;
 
-    float movementSpeed;
-    int playerDir;
 
     // PRIVATE FUNCS
+    void initMoves();
     void initTexture();
-    void initSprite();
+    void initSprites();
+
+    void moveToPos(int xMove, int yMove, sf::Sprite &sprite);
 
 public:
     Map();
     virtual ~Map();
 
     // FUNCS
-    int getDir();
-
-    void move(const float dirX, const float dirY);
-    bool collided(sf::Sprite target);
-    void goBack();
-    void update();
     void render(sf::RenderTarget &target);
 };

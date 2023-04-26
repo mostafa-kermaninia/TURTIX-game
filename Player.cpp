@@ -15,9 +15,9 @@ void Player::initSprite()
     sprite.setTexture(texture);
 
     // Resize sprite
-    sprite.setOrigin((sf::Vector2f)texture.getSize() / 2.f);
-    sprite.move(WINDOWWIDTH / 10.f, WINDOWHEIGHT / 2.f);
+    sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y);
     sprite.scale(0.2f, 0.2f);
+    sprite.move(WINDOWWIDTH / 10.f, GROUND + 18.f);
 }
 
 Player::Player()
@@ -37,27 +37,26 @@ void Player::move(const float dirX, const float dirY)
 {
     sprite.move(movementSpeed * dirX, movementSpeed * dirY);
 }
-
+void Player::jump(const float dirX, const float dirY)
+{
+    sprite.move(movementSpeed * dirX, movementSpeed * dirY);
+}
 void Player::goBack()
 {
     playerDir *= -1;
     sprite.scale(-1.f, 1.f);
 }
-
 void Player::update()
 {
 }
-
 void Player::render(sf::RenderTarget &target)
 {
     target.draw(sprite);
 }
-
 int Player::getDir()
 {
     return playerDir;
 }
-
 bool Player::collided(sf::Sprite target)
 {
     if (sprite.getGlobalBounds().intersects(target.getGlobalBounds()))

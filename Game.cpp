@@ -20,6 +20,10 @@ void Game::initWorld()
     worldBackground.scale(scaleWidth, scaleHeight);
 }
 
+void Game::initMap()
+{
+    map = new Map();
+}
 void Game::initPlayer()
 {
     player = new Player();
@@ -30,12 +34,14 @@ Game::Game()
 {
     initWindow();
     initWorld();
+    initMap();
     initPlayer();
 }
 Game::~Game()
 {
     delete window;
-    delete player;
+    delete map;
+    delete player; 
 }
 
 // FUNCS
@@ -83,7 +89,7 @@ void Game::updateInput()
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
     {
-        player->move(0.f, -1.f);
+        player->jump(0.f, -1.f);
     }
 }
 void Game::update()
@@ -104,7 +110,7 @@ void Game::render()
 
     // DRAW all things
     player->render(*window);
-
+    map->render(*window);
 
     window->display();
 }

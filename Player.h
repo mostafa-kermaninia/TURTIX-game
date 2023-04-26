@@ -6,11 +6,11 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <string>
-
-const int WINDOWHEIGHT = 800;
-const int WINDOWWIDTH = 1300;
-const int RIGHT = 1;
-const int LEFT = -1;
+#define WINDOWHEIGHT 800
+#define WINDOWWIDTH 1300
+#define GROUND 700.f
+#define RIGHT 1
+#define LEFT -1
 
 class Player
 {
@@ -33,6 +33,7 @@ public:
     int getDir();
 
     void move(const float dirX, const float dirY);
+    void jump(const float dirX, const float dirY);
     bool collided(sf::Sprite target);
     void goBack();
     void update();

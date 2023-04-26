@@ -1,5 +1,6 @@
 #pragma once
-#include"Player.h"
+#include "Player.h"
+#include "Map.h"
 
 class Game
 {
@@ -12,6 +13,7 @@ private:
 
     // PLAYER
     Player *player;
+    Map *map;
 
     // PRIVATE FUNCS
     void initWindow();
@@ -31,5 +33,4 @@ public:
     void update();
     void renderWorld();
     void render();
-
 };
