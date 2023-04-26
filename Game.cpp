@@ -1,133 +1,110 @@
 #include "Game.h"
 
-// PRIVATE
-void Game::initVariables()
-{
-    window = nullptr;
-
-    // Game logic
-    points = 0;
-    enemySpawnTimerMax = 1000.f;
-    enemySpawnTimer = enemySpawnTimerMax;
-    maxEnemies = 5;
-}
+// PRIVATE FUNCS
 void Game::initWindow()
 {
-    videoMode.height = 600;
-    videoMode.width = 800;
-
-    window = new sf::RenderWindow(videoMode, "TURTIX", sf::Style::Titlebar | sf::Style::Close);
-    window->setFramerateLimit(60);
+    window = new sf::RenderWindow(sf::VideoMode(WINDOWWIDTH, WINDOWHEIGHT), "GAME SPACEEEE", sf::Style::Close | sf::Style::Titlebar);
+    window->setFramerateLimit(144);
+    window->setVerticalSyncEnabled(false);
 }
-void Game::initEnemies()
+void Game::initWorld()
 {
-    enemy.setPosition(10.f, 10.f);
-    enemy.setSize(sf::Vector2f(100.f, 100.f));
-    enemy.setScale(sf::Vector2f(0.5f, 0.5f));
-    enemy.setFillColor(sf::Color::Black);
-    enemy.setOutlineColor(sf::Color::Green);
-    enemy.setOutlineThickness(1.f);
+    if (!worldBackgroundTexture.loadFromFile("Textures/background.png"))
+    {
+        std::cout << "ERROR::GAME::COULD NOT LOAD BACKGROUND PIC!!!" << std::endl;
+    }
+    worldBackground.setTexture(worldBackgroundTexture);
+
+    float scaleHeight = (float)WINDOWHEIGHT / worldBackgroundTexture.getSize().y;
+    float scaleWidth = (float)WINDOWWIDTH / worldBackgroundTexture.getSize().x;
+    worldBackground.scale(scaleWidth, scaleHeight);
 }
 
-// CONSTRUCTS / DESTRUCTORS
+void Game::initPlayer()
+{
+    player = new Player();
+}
+
+// CON/DES
 Game::Game()
 {
-    initVariables();
     initWindow();
-    initEnemies();
+    initWorld();
+    initPlayer();
 }
 Game::~Game()
 {
     delete window;
+    delete player;
 }
 
-// PUBLIC
-const bool Game::running() const
+// FUNCS
+void Game::run()
 {
-    return window->isOpen();
-}
-void Game::spawnEnemy()
-{
-    enemy.setPosition(
-        static_cast<float>(rand() % static_cast<int>(window->getSize().x - enemy.getSize().x)),
-        static_cast<float>(rand() % static_cast<int>(window->getSize().y - enemy.getSize().y)));
-
-    enemy.setFillColor(sf::Color::Green);
-    enemies.push_back(enemy);
-}
-void Game::pollEvents()
-{
-    // Event handling
-    while (window->pollEvent(ev))
+    while (window->isOpen())
     {
-        switch (ev.type)
+        update();
+        render();
+    }
+}
+void Game::updatePollEvents()
+{
+    sf::Event e;
+    while (window->pollEvent(e))
+    {
+        if (e.Event::type == sf::Event::Closed)
         {
-        case sf::Event::Closed:
             window->close();
-            break;
-
-        case sf::Event::KeyPressed:
-            if (ev.key.code == sf::Keyboard::Escape)
-                window->close();
-            break;
-            ;
+        }
+        if (e.Event::KeyPressed && e.Event::key.code == sf::Keyboard::Escape)
+        {
+            window->close();
         }
     }
 }
-void Game::updateMousePositions()
+void Game::updateInput()
 {
-    mousePosWindow = sf::Mouse::getPosition(*window);
-}
-
-void Game::updateEnemies()
-{
-    // Update timer for enemy spawning
-    if (enemies.size() < maxEnemies)
+    // Move Player
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
     {
-        if (enemySpawnTimer >= enemySpawnTimerMax)
+        if (player->getDir() == RIGHT)
         {
-            // Spawn enemy and reset timer
-            spawnEnemy();
-            spawnEnemy();
-            spawnEnemy();
-            spawnEnemy();
-            spawnEnemy();
-            enemySpawnTimer = 0.f;
+            player->goBack();
         }
-        else
-        {
-            enemySpawnTimer++;
-        }
+        player->move(-1.f, 0.f);
     }
-
-    // Move the enemies
-    for (auto &e : enemies)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
     {
-        e.move(0.f, 2.f);
+        if (player->getDir() == LEFT)
+        {
+            player->goBack();
+        }
+        player->move(1.f, 0.f);
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+    {
+        player->move(0.f, -1.f);
     }
 }
 void Game::update()
 {
-    pollEvents();
-    updateMousePositions();
-    updateEnemies();
-
-    // Relative to screen
-    // std::cout << "MOUSE: " << sf::Mouse::getPosition().x << " " << sf::Mouse::getPosition().y << '\n';
-    // Relative to window
-    // std::cout << "MOUSE: " << sf::Mouse::getPosition(*window).x << " " << sf::Mouse::getPosition(*window).y << '\n';
+    updatePollEvents();
+    updateInput();
 }
-
-void Game::renderEnemies()
+void Game::renderWorld()
 {
-    for (auto &e : enemies)
-    {
-        window->draw(e);
-    }
+    window->draw(worldBackground);
 }
 void Game::render()
 {
-    window->clear(sf::Color(0, 255, 255));
-    renderEnemies();
+    window->clear(sf::Color::Cyan);
+
+    // Draw world
+    renderWorld();
+
+    // DRAW all things
+    player->render(*window);
+
+
     window->display();
 }

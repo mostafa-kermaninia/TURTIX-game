@@ -1,55 +1,35 @@
 #pragma once
-#include <iostream>
-#include <vector>
-#include <ctime>
-
-#include <SFML/Graphics.hpp>
-#include <SFML/Network.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
+#include"Player.h"
 
 class Game
 {
 private:
-    // Window
     sf::RenderWindow *window;
-    sf::VideoMode videoMode;
-    sf::Event ev;
 
-    // Mouse position
-    sf::Vector2i mousePosWindow;
+    // World
+    sf::Sprite worldBackground;
+    sf::Texture worldBackgroundTexture;
 
-    // Game logic
-    int points;
-    float enemySpawnTimer;
-    float enemySpawnTimerMax;
-    int maxEnemies;
+    // PLAYER
+    Player *player;
 
-    // Game objects
-    std::vector<sf::RectangleShape> enemies;
-    sf::RectangleShape enemy;
-
-    // Private
-    void initVariables();
+    // PRIVATE FUNCS
     void initWindow();
-    void initEnemies();
+    void initWorld();
+    void initMap();
+    void initPlayer();
 
 public:
     Game();
     virtual ~Game();
 
-    const bool running() const;
-
     // FUNCS
-    void spawnEnemy();
+    void run();
 
-    void pollEvents();
-    void updateMousePositions();
-
-    void updateEnemies();
+    void updatePollEvents();
+    void updateInput();
     void update();
-
-    void renderEnemies();
+    void renderWorld();
     void render();
+
 };
