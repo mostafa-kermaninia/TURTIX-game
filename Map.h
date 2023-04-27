@@ -8,6 +8,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+
 #define WINDOWHEIGHT 800
 #define WINDOWWIDTH 1300
 #define RIGHT 1
@@ -19,7 +20,22 @@ const char STAR = '*';
 const char DIAMOND = '^';
 const char PLAY_GROUND = '.';
 const char PORTAL = '$';
+const char TRAP = '|';
+const char BLOCK = 'H';
 
+const std::string TEXTURE_SOURCE = "Textures/";
+const std::vector<std::string> TEXTURE_NAME = {
+    "ground.png",
+    "Enemy1.png",
+    "Enemy2.png",
+    "jailed_baby.png",
+    "free_baby.png",
+    "star.png",
+    "diamond.png",
+    "portal.png",
+    "trap.png",
+    "block.png"
+};
 const std::vector<std::string> maps = {"map1", "map2", "map3"};
 
 enum
@@ -31,13 +47,14 @@ enum
     FREE_BABY_INDEX,
     STAR_INDEX,
     DIAMOND_INDEX,
-    PORTAL_INDEX
+    PORTAL_INDEX,
+    TRAP_INDEX,
+    BLOCK_INDEX
 };
 
 class Map
 {
 private:
-
     int map_number;
     std::vector<sf::Texture> textures;
 
@@ -49,6 +66,7 @@ private:
     std::vector<sf::Sprite> stars;
     std::vector<sf::Sprite> diamonds;
     std::vector<sf::Sprite> ground;
+    std::vector<sf::Sprite> traps;
 
     // PRIVATE FUNCS
     sf::Vector2f initMoves(int x_pos, int y_pos);

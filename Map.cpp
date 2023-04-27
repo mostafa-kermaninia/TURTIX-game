@@ -24,14 +24,9 @@ void Map::load_texture(std::string file_name)
 
 void Map::initTexture()
 {
-    load_texture("Textures/ground.png");
-    load_texture("Textures/Enemy1.png");
-    load_texture("Textures/Enemy2.png");
-    load_texture("Textures/jailed_baby.png");
-    load_texture("Textures/free_baby.png");
-    load_texture("Textures/star.png");
-    load_texture("Textures/diamond.png");
-    load_texture("Textures/portal.png");
+    // need change
+    for (int i = 0; i < TEXTURE_NAME.size(); i++)
+        load_texture(TEXTURE_SOURCE + TEXTURE_NAME[i]);
 }
 
 void Map::initSprites(char object_char, int y_pos, int x_pos)
@@ -40,9 +35,14 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
     if (object_char == PLAY_GROUND)
     {
         new_sp.setTexture(textures[PLAY_GROUND_INDEX]);
-        new_sp.scale(0.2f, 0.2f);
+        new_sp.scale(0.05f, 0.55f);
         new_sp.move(initMoves(x_pos, y_pos));
         ground.push_back(new_sp);
+        sf::Sprite sec_sp;
+        sec_sp.setTexture(textures[PLAY_GROUND_INDEX]);
+        sec_sp.scale(0.05f, 0.55f);
+        sec_sp.move(initMoves(x_pos, y_pos + 1));
+        ground.push_back(sec_sp);
     }
     else if (object_char == F_ENEMIE)
     {
@@ -78,6 +78,18 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
         new_sp.scale(0.1f, 0.1f);
         new_sp.move(initMoves(x_pos, y_pos));
         portal = new_sp;
+    }
+    else if (object_char == TRAP)
+    {
+        new_sp.setTexture(textures[TRAP_INDEX]);
+        new_sp.scale(0.15f, 0.2f);
+        new_sp.move(initMoves(x_pos, y_pos));
+        traps.push_back(new_sp);
+        sf::Sprite sec_sp;
+        sec_sp.setTexture(textures[PLAY_GROUND_INDEX]);
+        sec_sp.scale(0.05f, 0.55f);
+        sec_sp.move(initMoves(x_pos, y_pos + 1));
+        ground.push_back(sec_sp);
     }
 }
 
@@ -115,9 +127,9 @@ Map::~Map()
 // FUNCS
 void Map::render(sf::RenderTarget &target)
 {
-    for (sf::Sprite g : ground)
+    for (int i = ground.size() - 1; i >= 0; i--)
     {
-        target.draw(g);
+        target.draw(ground[i]);
     }
     for (sf::Sprite fe : f_enemies)
     {
@@ -139,5 +151,7 @@ void Map::render(sf::RenderTarget &target)
     {
         target.draw(d);
     }
+    for (sf::Sprite t : traps)
+        target.draw(t);
     target.draw(portal);
 }
