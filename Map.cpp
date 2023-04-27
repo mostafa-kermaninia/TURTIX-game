@@ -25,13 +25,13 @@ void Map::load_texture(std::string file_name)
 void Map::initTexture()
 {
     load_texture("Textures/ground.png");
-    load_texture("Textures/Enemy1.jpg");
-    load_texture("Textures/Enemy2.jpg");
-    load_texture("Textures/jailed_baby.jpg");
-    load_texture("Textures/free_baby.jpg");
+    load_texture("Textures/Enemy1.png");
+    load_texture("Textures/Enemy2.png");
+    load_texture("Textures/jailed_baby.png");
+    load_texture("Textures/free_baby.png");
     load_texture("Textures/star.png");
     load_texture("Textures/diamond.png");
-    load_texture("Textures/portal.jpg");
+    load_texture("Textures/portal.png");
 }
 
 void Map::initSprites(char object_char, int y_pos, int x_pos)
