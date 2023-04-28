@@ -35,6 +35,97 @@ void Game::initPlayer()
     player = new Player();
 }
 
+bool Game::handleCollisions()
+{
+    // if player is in world,it can move
+    if (!player->collided(worldBackground))
+    {
+        return true;
+    }
+
+    // // // handle collision with objects
+
+    // // Collision with PORTAL
+    // if (player->collided(map->getPortal()))
+    // {
+    //     // return true;
+    // }
+
+    // // Collision with FIRST Enemies
+    // for (auto enemy : map->getFEnemies())
+    // {
+    //     if (player->collided(enemy))
+    //     {
+    //         // return true;
+    //     }
+    // }
+
+    // // Collision with SECOND Enemies
+    // for (auto enemy : map->getSEnemies())
+    // {
+    //     if (player->collided(enemy))
+    //     {
+    //         // return true;
+    //     }
+    // }
+
+    // // Collision with Jailed Babies
+    // for (auto baby : map->getJailedBabies())
+    // {
+    //     if (player->collided(baby))
+    //     {
+    //         return false;
+    //     }
+    // }
+
+    // // Collision with stars
+    // for (auto star : map->getStars())
+    // {
+    //     if (player->collided(star))
+    //     {
+    //         // return true;
+    //     }
+    // }
+
+    // // Collision with diamonds
+    // for (auto diamond : map->getDiamonds())
+    // {
+    //     if (player->collided(diamond))
+    //     {
+    //         // return true;
+    //     }
+    // }
+
+    // // Collision with ground
+    // for (auto groundPart : map->getGround())
+    // {
+    //     if (player->collided(groundPart))
+    //     {
+    //         return false;
+    //     }
+    // }
+
+    // // Collision with traps
+    // for (auto trap : map->getTraps())
+    // {
+    //     if (player->collided(trap))
+    //     {
+    //         return false;
+    //     }
+    // }
+
+    // // Collision with blocks
+    // for (auto block : map->getBlocks())
+    // {
+    //     if (player->collided(block))
+    //     {
+    //         return false;
+    //     }
+    // }
+
+    return false;
+}
+
 // CON/DES
 Game::Game()
 {
@@ -78,6 +169,7 @@ void Game::updatePollEvents()
 void Game::updateInput()
 {
     // Move Player
+    bool canMove = true;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
     {
         if (player->getDir() == RIGHT)
@@ -85,6 +177,11 @@ void Game::updateInput()
             player->goBack();
         }
         player->move(-1.f, 0.f);
+        canMove = handleCollisions();
+        if (canMove)
+        {
+            player->move(1.f, 0.f);
+        }
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
     {
@@ -93,6 +190,11 @@ void Game::updateInput()
             player->goBack();
         }
         player->move(1.f, 0.f);
+        canMove = handleCollisions();
+        if (canMove)
+        {
+            player->move(-1.f, 0.f);
+        }
     }
     // pakesh konnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
@@ -109,13 +211,12 @@ void Game::updateView()
     // updatev view if its in background area
     if (player->getPos().x > 0 &&
         player->getPos().y > 0 &&
-        player->getPos().y < worldBackground.getLocalBounds().height * worldBackground.getScale().y &&
-        player->getPos().x < worldBackground.getLocalBounds().width * worldBackground.getScale().x)
+        player->getPos().y < worldBackground.getGlobalBounds().height &&
+        player->getPos().x < worldBackground.getGlobalBounds().width)
     {
         gameView.setCenter(player->getPos());
     }
 }
-
 void Game::update()
 {
     updatePollEvents();

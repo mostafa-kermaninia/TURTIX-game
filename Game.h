@@ -24,7 +24,7 @@ private:
     void initView();
     void initMap();
     void initPlayer();
-    // bool areCollided(sf::Vector2f origin1,sf::Vector2f origin1,sf::Vector2f origin1,sf::Vector2f origin1);
+    bool handleCollisions();
 public:
     Game();
     virtual ~Game();
@@ -38,4 +38,5 @@ public:
     void update();
     void renderWorld();
     void render();
+    
 };

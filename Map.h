@@ -69,7 +69,6 @@ private:
     std::vector<sf::Sprite> diamonds;
     std::vector<sf::Sprite> ground;
     std::vector<sf::Sprite> traps;
-
     // PRIVATE FUNCS
     sf::Vector2f initMoves(int x_pos, int y_pos);
     void initTexture();
@@ -84,4 +83,13 @@ public:
 
     // FUNCS
     void render(sf::RenderTarget &target);
+
+    sf::Sprite getPortal() { return portal; }
+    std::vector<sf::Sprite> getFEnemies() { return f_enemies; }
+    std::vector<sf::Sprite> getSEnemies() { return s_enemies; }
+    std::vector<sf::Sprite> getJailedBabies() { return jailed_babies; }
+    std::vector<sf::Sprite> getStars() { return stars; }
+    std::vector<sf::Sprite> getDiamonds() { return diamonds; }
+    std::vector<sf::Sprite> getGround() { return ground; }
+    std::vector<sf::Sprite> getTraps() { return traps; }
 };
