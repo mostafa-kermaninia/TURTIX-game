@@ -201,9 +201,11 @@ void Game::updateInput()
     {
         player->move(0.f, 1.f);
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+     && player->is_jumping_finished())
+     || !player->is_jumping_finished())
     {
-        player->jump(0.f, -1.f);
+        player->jump(0.f, -1.f);   
     }
 }
 void Game::updateView()

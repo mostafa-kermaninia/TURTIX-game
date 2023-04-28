@@ -12,15 +12,21 @@
 #define RIGHT 1
 #define LEFT -1
 
+const double ACCELERATION = 0.25;
+const int JUMP_DURATION = 80;
+
 class Player
 {
 private:
     sf::Texture texture;
     sf::Sprite sprite;
 
-    float movementSpeed;
-    int playerDir;
+    float movement_speed;
+    float jump_speed;
+    int player_dir;
 
+    bool is_in_air;
+    int jump_time;
     // PRIVATE FUNCS
     void initTexture();
     void initSprite();
@@ -34,6 +40,8 @@ public:
     sf::Vector2f getPos(){
         return sprite.getPosition();
     }
+
+    bool is_jumping_finished();
     void move(const float dirX, const float dirY);
     void jump(const float dirX, const float dirY);
     bool collided(sf::Sprite target);

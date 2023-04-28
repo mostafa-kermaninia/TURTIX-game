@@ -46,36 +46,40 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
     }
     else if (object_char == F_ENEMIE)
     {
+        Enemy1 *new_enemy = new Enemy1();
         new_sp.setTexture(textures[F_ENEMIE_INDEX]);
         new_sp.scale(0.1f, 0.1f);
         new_sp.move(initMoves(x_pos, y_pos));
-        f_enemies.push_back(new_sp);
+        new_enemy->set_texture(new_sp);
+        f_enemies.push_back(new_enemy);
     }
     else if (object_char == S_ENEMIE)
     {
+        Enemy2 *new_enemy = new Enemy2(s_enemies.size() * DELAY);
         new_sp.setTexture(textures[S_ENEMIE_INDEX]);
         new_sp.scale(0.1f, 0.1f);
         new_sp.move(initMoves(x_pos, y_pos));
-        s_enemies.push_back(new_sp);
+        new_enemy->set_texture(new_sp);
+        s_enemies.push_back(new_enemy);
     }
     else if (object_char == STAR)
     {
         new_sp.setTexture(textures[STAR_INDEX]);
-        new_sp.scale(0.1f, 0.1f);
+        new_sp.scale(0.05f, 0.05f);
         new_sp.move(initMoves(x_pos, y_pos));
         stars.push_back(new_sp);
     }
     else if (object_char == DIAMOND)
     {
         new_sp.setTexture(textures[DIAMOND_INDEX]);
-        new_sp.scale(0.1f, 0.1f);
+        new_sp.scale(0.2f, 0.2f);
         new_sp.move(initMoves(x_pos, y_pos));
         diamonds.push_back(new_sp);
     }
     else if (object_char == PORTAL)
     {
         new_sp.setTexture(textures[PORTAL_INDEX]);
-        new_sp.scale(0.1f, 0.1f);
+        new_sp.scale(0.08f, 0.08f);
         new_sp.move(initMoves(x_pos, y_pos));
         portal = new_sp;
     }
@@ -90,6 +94,13 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
         sec_sp.scale(0.05f, 0.55f);
         sec_sp.move(initMoves(x_pos, y_pos + 1));
         ground.push_back(sec_sp);
+    }
+    else if (object_char == BLOCK)
+    {
+        new_sp.setTexture(textures[BLOCK_INDEX]);
+        new_sp.scale(0.1f, 0.1f);
+        new_sp.move(initMoves(x_pos, y_pos));
+        blocks.push_back(new_sp);
     }
 }
 
@@ -131,13 +142,13 @@ void Map::render(sf::RenderTarget &target)
     {
         target.draw(ground[i]);
     }
-    for (sf::Sprite fe : f_enemies)
+    for (Enemy1 *fe : f_enemies)
     {
-        target.draw(fe);
+        fe->render(target);
     }
-    for (sf::Sprite se : s_enemies)
+    for (Enemy2 *se : s_enemies)
     {
-        target.draw(se);
+        se->render(target);
     }
     for (sf::Sprite jb : jailed_babies)
     {
@@ -153,5 +164,7 @@ void Map::render(sf::RenderTarget &target)
     }
     for (sf::Sprite t : traps)
         target.draw(t);
+    for (sf::Sprite b : blocks)
+        target.draw(b);
     target.draw(portal);
 }
