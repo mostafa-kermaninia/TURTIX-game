@@ -15,6 +15,14 @@
 const double ACCELERATION = 0.25;
 const int JUMP_DURATION = 80;
 
+enum INDEX
+{
+    LEFT_INDEX,
+    UP_INDEX,
+    RIGHT_INDEX,
+    DOWM_INDEX
+};
+
 class Player
 {
 private:
@@ -37,7 +45,14 @@ public:
 
     // FUNCS
     int getDir();
-    sf::Vector2f getPos(){
+    std::vector<float> getEdges()
+    {
+        return {
+            sprite.getGlobalBounds().left, sprite.getGlobalBounds().top, sprite.getGlobalBounds().left + sprite.getGlobalBounds().width, sprite.getGlobalBounds().top + sprite.getGlobalBounds().height
+            };
+    }
+    sf::Vector2f getPos()
+    {
         return sprite.getPosition();
     }
 

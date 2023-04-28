@@ -17,14 +17,14 @@ void Player::initSprite()
     // Resize sprite
     sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y);
     sprite.scale(0.1f, 0.1f);
-    sprite.move(WINDOWWIDTH / 8.f, WINDOWHEIGHT * 2.3 + 30.f);
+    sprite.move(WINDOWWIDTH / 1.9, WINDOWHEIGHT / 1.9);
 }
 
 Player::Player()
 {
     is_in_air = false;
     jump_time = 1;
-    movement_speed = 1.f;
+    movement_speed = 10.f;
     jump_speed = 10.f;
     player_dir = RIGHT;
     initTexture();
@@ -38,7 +38,7 @@ Player::~Player()
 
 bool Player::is_jumping_finished()
 {
-    if(jump_time == JUMP_DURATION || jump_time == 1)
+    if (jump_time == JUMP_DURATION || jump_time == 1)
     {
         jump_time = 1;
         return true;
@@ -52,7 +52,7 @@ void Player::move(const float dirX, const float dirY)
 }
 void Player::jump(const float dirX, const float dirY)
 {
-    sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time)* dirY);
+    sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time) * dirY);
     jump_time++;
 }
 void Player::goBack()
@@ -71,6 +71,7 @@ int Player::getDir()
 {
     return player_dir;
 }
+
 bool Player::collided(sf::Sprite target)
 {
     if (sprite.getGlobalBounds().intersects(target.getGlobalBounds()))
@@ -78,4 +79,13 @@ bool Player::collided(sf::Sprite target)
         return true;
     }
     return false;
+
+    // updatev view if its in background area
+    // if (sprite.getGlobalBounds().left > target.getGlobalBounds().left &&
+    //     sprite.getGlobalBounds().top> target.getGlobalBounds().top  &&
+    //     sprite.getGlobalBounds().left+sprite.getGlobalBounds().width < target.getGlobalBounds().left+sprite.getGlobalBounds().width &&
+    //     getPos().x < worldBackground.getGlobalBounds().width)
+    // {
+    //     gameView.setCenter(getPos());
+    // }
 }

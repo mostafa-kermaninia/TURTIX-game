@@ -38,7 +38,11 @@ void Game::initPlayer()
 bool Game::handleCollisions()
 {
     // if player is in world,it can move
-    if (!player->collided(worldBackground))
+    // update view if its in background area
+    if (player->getEdges()[LEFT_INDEX] > worldBackground.getGlobalBounds().left &&
+        player->getEdges()[UP_INDEX] > worldBackground.getGlobalBounds().top &&
+        player->getEdges()[RIGHT_INDEX] < worldBackground.getGlobalBounds().left + worldBackground.getGlobalBounds().width &&
+        player->getEdges()[DOWM_INDEX] < worldBackground.getGlobalBounds().top + worldBackground.getGlobalBounds().height)
     {
         return true;
     }
@@ -178,7 +182,7 @@ void Game::updateInput()
         }
         player->move(-1.f, 0.f);
         canMove = handleCollisions();
-        if (canMove)
+        if (!canMove)
         {
             player->move(1.f, 0.f);
         }
@@ -191,7 +195,7 @@ void Game::updateInput()
         }
         player->move(1.f, 0.f);
         canMove = handleCollisions();
-        if (canMove)
+        if (!canMove)
         {
             player->move(-1.f, 0.f);
         }
@@ -200,12 +204,20 @@ void Game::updateInput()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
     {
         player->move(0.f, 1.f);
+        canMove = handleCollisions();
+        if (!canMove)
+        {
+            player->move(0.f, -1.f);
+        }
     }
-    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
-     && player->is_jumping_finished())
-     || !player->is_jumping_finished())
+    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) && player->is_jumping_finished()) || !player->is_jumping_finished())
     {
-        player->jump(0.f, -1.f);   
+        player->jump(0.f, -1.f);
+        canMove = handleCollisions();
+        if (!canMove)
+        {
+            player->move(0.f, 1.f);
+        }
     }
 }
 void Game::updateView()
