@@ -8,11 +8,16 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "Enemy1.h"
+#include "Enemy2.h"
 
 #define WINDOWHEIGHT 800
 #define WINDOWWIDTH 1300
 #define RIGHT 1
 #define LEFT -1
+
+const int DELAY = 50;
+
 const char F_ENEMIE = 'E';
 const char S_ENEMIE = 'M';
 const char JAILED_BABY = 'O';
@@ -60,13 +65,14 @@ private:
 
     // game objects
     sf::Sprite portal;
-    std::vector<sf::Sprite> f_enemies;
-    std::vector<sf::Sprite> s_enemies;
+    std::vector<Enemy1 *> f_enemies;
+    std::vector<Enemy2 *> s_enemies;
     std::vector<sf::Sprite> jailed_babies;
     std::vector<sf::Sprite> stars;
     std::vector<sf::Sprite> diamonds;
     std::vector<sf::Sprite> ground;
     std::vector<sf::Sprite> traps;
+    std::vector<sf::Sprite> blocks;
 
     // PRIVATE FUNCS
     sf::Vector2f initMoves(int x_pos, int y_pos);

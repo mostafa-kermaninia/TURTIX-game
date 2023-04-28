@@ -16,7 +16,7 @@ void Player::initSprite()
 
     // Resize sprite
     sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y);
-    sprite.scale(0.2f, 0.2f);
+    sprite.scale(0.1f, 0.1f);
     sprite.move(WINDOWWIDTH / 10.f, GROUND + 18.f);
 }
 
