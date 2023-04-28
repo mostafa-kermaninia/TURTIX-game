@@ -9,8 +9,11 @@
 #include <string>
 #include <vector>
 
-#define WINDOWHEIGHT 800
-#define WINDOWWIDTH 1300
+#define WINDOWHEIGHT 600
+#define WINDOWWIDTH 800
+#define BACKGROUNDHEIGHT 4000
+#define BACKGROUNDWIDTH 3000
+
 #define RIGHT 1
 #define LEFT -1
 const char F_ENEMIE = 'E';
@@ -34,8 +37,7 @@ const std::vector<std::string> TEXTURE_NAME = {
     "diamond.png",
     "portal.png",
     "trap.png",
-    "block.png"
-};
+    "block.png"};
 const std::vector<std::string> maps = {"map1", "map2", "map3"};
 
 enum

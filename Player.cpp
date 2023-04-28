@@ -17,12 +17,12 @@ void Player::initSprite()
     // Resize sprite
     sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y);
     sprite.scale(0.2f, 0.2f);
-    sprite.move(WINDOWWIDTH / 10.f, GROUND + 18.f);
+    sprite.move(WINDOWWIDTH / 8.f, WINDOWHEIGHT * 2.3 + 30.f);
 }
 
 Player::Player()
 {
-    movementSpeed = 1.f;
+    movementSpeed = 10.f;
     playerDir = RIGHT;
     initTexture();
     initSprite();

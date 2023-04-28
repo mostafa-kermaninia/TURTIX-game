@@ -11,6 +11,9 @@ private:
     sf::Sprite worldBackground;
     sf::Texture worldBackgroundTexture;
 
+    // // view
+    sf::View gameView;
+
     // PLAYER
     Player *player;
     Map *map;
@@ -18,9 +21,10 @@ private:
     // PRIVATE FUNCS
     void initWindow();
     void initWorld();
+    void initView();
     void initMap();
     void initPlayer();
-
+    // bool areCollided(sf::Vector2f origin1,sf::Vector2f origin1,sf::Vector2f origin1,sf::Vector2f origin1);
 public:
     Game();
     virtual ~Game();
@@ -30,6 +34,7 @@ public:
 
     void updatePollEvents();
     void updateInput();
+    void updateView();
     void update();
     void renderWorld();
     void render();

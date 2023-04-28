@@ -15,11 +15,17 @@ void Game::initWorld()
     }
     worldBackground.setTexture(worldBackgroundTexture);
 
-    float scaleHeight = (float)WINDOWHEIGHT / worldBackgroundTexture.getSize().y;
-    float scaleWidth = (float)WINDOWWIDTH / worldBackgroundTexture.getSize().x;
-    worldBackground.scale(scaleWidth, scaleHeight);
-}
+    // float scaleHeight = (float)WINDOWHEIGHT * 3 / BACKGROUNDHEIGHT;
+    // float scaleWidth = (float)WINDOWWIDTH * 3 / BACKGROUNDWIDTH;
 
+    float scaleHeight = 0.1;
+    float scaleWidth = 0.1;
+    worldBackground.setScale(0.5, 0.5);
+}
+void Game::initView()
+{
+    gameView = sf::View((sf::FloatRect(WINDOWWIDTH, WINDOWWIDTH, WINDOWWIDTH, WINDOWHEIGHT)));
+}
 void Game::initMap()
 {
     map = new Map();
@@ -34,6 +40,7 @@ Game::Game()
 {
     initWindow();
     initWorld();
+    initView();
     initMap();
     initPlayer();
 }
@@ -41,7 +48,7 @@ Game::~Game()
 {
     delete window;
     delete map;
-    delete player; 
+    delete player;
 }
 
 // FUNCS
@@ -87,15 +94,33 @@ void Game::updateInput()
         }
         player->move(1.f, 0.f);
     }
+    // pakesh konnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
+    {
+        player->move(0.f, 1.f);
+    }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
     {
         player->jump(0.f, -1.f);
     }
 }
+void Game::updateView()
+{
+    // updatev view if its in background area
+    if (player->getPos().x > 0 &&
+        player->getPos().y > 0 &&
+        player->getPos().y < worldBackground.getLocalBounds().height * worldBackground.getScale().y &&
+        player->getPos().x < worldBackground.getLocalBounds().width * worldBackground.getScale().x)
+    {
+        gameView.setCenter(player->getPos());
+    }
+}
+
 void Game::update()
 {
     updatePollEvents();
     updateInput();
+    updateView();
 }
 void Game::renderWorld()
 {
@@ -107,6 +132,9 @@ void Game::render()
 
     // Draw world
     renderWorld();
+
+    // set view
+    window->setView(gameView);
 
     // DRAW all things
     player->render(*window);
