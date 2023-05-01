@@ -27,4 +27,6 @@ public:
     void render(sf::RenderTarget &target);
     int get_dir();
     bool collided(sf::Sprite target);
+
+    sf::Sprite get_sprite() { return enemy; }
 };

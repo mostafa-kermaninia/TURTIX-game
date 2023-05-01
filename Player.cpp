@@ -22,6 +22,8 @@ void Player::initSprite()
 
 Player::Player()
 {
+    score = 0;
+    health = INITIAL_HEALTH;
     is_in_air = false;
     jump_time = 1;
     movement_speed = 10.f;
@@ -55,6 +57,30 @@ void Player::jump(const float dirX, const float dirY)
     sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time) * dirY);
     jump_time++;
 }
+
+void Player::undo_jump(const float dirX, const float dirY)
+{
+    jump_time--;
+    sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time) * dirY);
+    if (jump_speed - ACCELERATION * jump_time < 0)
+        jump_time = 0;
+    else 
+        jump_time = jump_speed / ACCELERATION + 1;
+}
+
+void Player::update_score(std::string reward_name)
+{
+    if (reward_name == "star")
+        score += STAR_SCORE;
+    else if (reward_name == "diamond")
+        score += DIAMOND_SCORE;
+}
+
+void Player::update_health()
+{
+    health--;
+}
+
 void Player::goBack()
 {
     player_dir *= -1;
@@ -79,13 +105,13 @@ bool Player::collided(sf::Sprite target)
         return true;
     }
     return false;
-
-    // updatev view if its in background area
-    // if (sprite.getGlobalBounds().left > target.getGlobalBounds().left &&
-    //     sprite.getGlobalBounds().top> target.getGlobalBounds().top  &&
-    //     sprite.getGlobalBounds().left+sprite.getGlobalBounds().width < target.getGlobalBounds().left+sprite.getGlobalBounds().width &&
-    //     getPos().x < worldBackground.getGlobalBounds().width)
-    // {
-    //     gameView.setCenter(getPos());
-    // }
 }
+
+// updatev view if its in background area
+// if (sprite.getGlobalBounds().left > target.getGlobalBounds().left &&
+//     sprite.getGlobalBounds().top> target.getGlobalBounds().top  &&
+//     sprite.getGlobalBounds().left+sprite.getGlobalBounds().width < target.getGlobalBounds().left+sprite.getGlobalBounds().width &&
+//     getPos().x < worldBackground.getGlobalBounds().width)
+// {
+//     gameView.setCenter(getPos());
+// }

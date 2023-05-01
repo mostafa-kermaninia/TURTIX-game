@@ -70,6 +70,7 @@ private:
     std::vector<Enemy1 *> f_enemies;
     std::vector<Enemy2 *> s_enemies;
     std::vector<sf::Sprite> jailed_babies;
+    std::vector<sf::Sprite> free_babies;
     std::vector<sf::Sprite> stars;
     std::vector<sf::Sprite> diamonds;
     std::vector<sf::Sprite> ground;
@@ -89,8 +90,10 @@ public:
     virtual ~Map();
 
     // FUNCS
+    void remove_object(std::string obj_name, int object_index);
+    void free_baby(int baby_index);
     void render(sf::RenderTarget &target);
-
+    
     sf::Sprite getPortal() { return portal; }
     std::vector<Enemy1 *> getFEnemies() { return f_enemies; }
     std::vector<Enemy2 *> getSEnemies() { return s_enemies; }
@@ -99,4 +102,5 @@ public:
     std::vector<sf::Sprite> getDiamonds() { return diamonds; }
     std::vector<sf::Sprite> getGround() { return ground; }
     std::vector<sf::Sprite> getTraps() { return traps; }
+    std::vector<sf::Sprite> getBlocks() { return blocks; }
 };

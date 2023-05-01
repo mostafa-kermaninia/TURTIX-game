@@ -62,6 +62,15 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
         new_enemy->set_texture(new_sp);
         s_enemies.push_back(new_enemy);
     }
+
+    else if (object_char == JAILED_BABY)
+    {
+        new_sp.setTexture(textures[JAILED_BABY_INDEX]);
+        new_sp.scale(0.1f, 0.08f);
+        new_sp.move(initMoves(x_pos, y_pos));
+        jailed_babies.push_back(new_sp);
+    }
+
     else if (object_char == STAR)
     {
         new_sp.setTexture(textures[STAR_INDEX]);
@@ -133,9 +142,32 @@ Map::Map()
 
 Map::~Map()
 {
+    for (int i = 0; i < f_enemies.size(); i++)
+        delete f_enemies[i];
+    for (int i = 0; i < s_enemies.size(); i++)
+        delete s_enemies[i];
 }
 
 // FUNCS
+void Map::remove_object(std::string obj_name, int object_index)
+{
+    if (obj_name == "star")
+
+        stars.erase(stars.begin() + object_index);
+    else if (obj_name == "diamond")
+        diamonds.erase(diamonds.begin() + object_index);
+}
+
+void Map::free_baby(int baby_index)
+{
+    sf::Sprite new_free_baby;
+    new_free_baby.setTexture(textures[FREE_BABY_INDEX]);
+    new_free_baby.scale(-0.1f, 0.12f);
+    new_free_baby.move(initMoves(jailed_babies[baby_index].getPosition().x / 50, jailed_babies[baby_index].getPosition().y / 50));
+    free_babies.push_back(new_free_baby);
+    jailed_babies.erase(jailed_babies.begin() + baby_index);
+}
+
 void Map::render(sf::RenderTarget &target)
 {
     for (int i = ground.size() - 1; i >= 0; i--)
@@ -154,6 +186,8 @@ void Map::render(sf::RenderTarget &target)
     {
         target.draw(jb);
     }
+    for (sf::Sprite fb : free_babies)
+        target.draw(fb);
     for (sf::Sprite s : stars)
     {
         target.draw(s);

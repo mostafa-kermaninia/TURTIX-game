@@ -12,8 +12,12 @@
 #define RIGHT 1
 #define LEFT -1
 
+
 const double ACCELERATION = 0.25;
 const int JUMP_DURATION = 80;
+const int INITIAL_HEALTH = 3;
+const int STAR_SCORE = 5;
+const int DIAMOND_SCORE = 10;
 
 enum INDEX
 {
@@ -35,6 +39,8 @@ private:
 
     bool is_in_air;
     int jump_time;
+    int health;
+    int score;
     // PRIVATE FUNCS
     void initTexture();
     void initSprite();
@@ -48,8 +54,7 @@ public:
     std::vector<float> getEdges()
     {
         return {
-            sprite.getGlobalBounds().left, sprite.getGlobalBounds().top, sprite.getGlobalBounds().left + sprite.getGlobalBounds().width, sprite.getGlobalBounds().top + sprite.getGlobalBounds().height
-            };
+            sprite.getGlobalBounds().left, sprite.getGlobalBounds().top, sprite.getGlobalBounds().left + sprite.getGlobalBounds().width, sprite.getGlobalBounds().top + sprite.getGlobalBounds().height};
     }
     sf::Vector2f getPos()
     {
@@ -59,7 +64,10 @@ public:
     bool is_jumping_finished();
     void move(const float dirX, const float dirY);
     void jump(const float dirX, const float dirY);
+    void undo_jump(const float dirX, const float dirY);
     bool collided(sf::Sprite target);
+    void update_score(std::string reward_name);
+    void update_health();
     void goBack();
     void update();
     void render(sf::RenderTarget &target);
