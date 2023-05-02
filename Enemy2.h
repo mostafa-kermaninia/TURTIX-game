@@ -23,6 +23,7 @@ private:
     bool stabled;
 
     bool is_change_time();
+
 public:
     Enemy2(int offset);
     ~Enemy2();

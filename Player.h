@@ -11,6 +11,10 @@
 #define GROUND 3800.f
 #define RIGHT 1
 #define LEFT -1
+#define SIDES 0
+#define TOP 1
+#define ERROR -1
+
 
 
 const double ACCELERATION = 0.25;
@@ -66,6 +70,7 @@ public:
     void jump(const float dirX, const float dirY);
     void undo_jump(const float dirX, const float dirY);
     bool collided(sf::Sprite target);
+    int collotionType(sf::Sprite target);
     void update_score(std::string reward_name);
     void update_health();
     void goBack();

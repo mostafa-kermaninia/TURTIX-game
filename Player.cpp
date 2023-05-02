@@ -47,7 +47,6 @@ bool Player::is_jumping_finished()
     }
     return false;
 }
-
 void Player::move(const float dirX, const float dirY)
 {
     sprite.move(movement_speed * dirX, movement_speed * dirY);
@@ -57,17 +56,15 @@ void Player::jump(const float dirX, const float dirY)
     sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time) * dirY);
     jump_time++;
 }
-
 void Player::undo_jump(const float dirX, const float dirY)
 {
     jump_time--;
     sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time) * dirY);
     if (jump_speed - ACCELERATION * jump_time < 0)
         jump_time = 0;
-    else 
+    else
         jump_time = jump_speed / ACCELERATION + 1;
 }
-
 void Player::update_score(std::string reward_name)
 {
     if (reward_name == "star")
@@ -75,12 +72,10 @@ void Player::update_score(std::string reward_name)
     else if (reward_name == "diamond")
         score += DIAMOND_SCORE;
 }
-
 void Player::update_health()
 {
     health--;
 }
-
 void Player::goBack()
 {
     player_dir *= -1;
@@ -97,7 +92,6 @@ int Player::getDir()
 {
     return player_dir;
 }
-
 bool Player::collided(sf::Sprite target)
 {
     if (sprite.getGlobalBounds().intersects(target.getGlobalBounds()))
@@ -106,12 +100,19 @@ bool Player::collided(sf::Sprite target)
     }
     return false;
 }
-
-// updatev view if its in background area
-// if (sprite.getGlobalBounds().left > target.getGlobalBounds().left &&
-//     sprite.getGlobalBounds().top> target.getGlobalBounds().top  &&
-//     sprite.getGlobalBounds().left+sprite.getGlobalBounds().width < target.getGlobalBounds().left+sprite.getGlobalBounds().width &&
-//     getPos().x < worldBackground.getGlobalBounds().width)
-// {
-//     gameView.setCenter(getPos());
-// }
+int Player::collotionType(sf::Sprite target)
+{
+    // std::cout << sprite.getGlobalBounds().top + sprite.getGlobalBounds().height << "polooooooo" <<target.getGlobalBounds().top
+    //           << "[poiuyt]" << '\n';
+    if (sprite.getGlobalBounds().top + sprite.getGlobalBounds().height <= target.getGlobalBounds().top)
+    {
+        std::cout << "az basan kir khordam\n";
+        return TOP;
+    }
+    else
+    {
+        std::cout << "az baghala kir khordam\n";
+        return SIDES;
+    }
+    return ERROR;
+}

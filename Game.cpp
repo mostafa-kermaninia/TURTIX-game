@@ -41,34 +41,39 @@ bool Game::handleCollisions()
     // if player is in world,it can move
     // update view if its in background area
     // // // handle collision with objects
-
     std::vector<sf::Sprite> objects;
     // // Collision with PORTAL
     // if (player->collided(map->getPortal()))
     // {
     //     // return true;
     // }
-
     // // Collision with FIRST Enemies
     std::vector<Enemy1 *> f_enemies = map->getFEnemies();
     for (int i = 0; i < f_enemies.size(); i++)
     {
         if (player->collided(f_enemies[i]->get_sprite()))
         {
-            player->update_health();
+            if (player->collotionType(f_enemies[i]->get_sprite()) == TOP)
+            {
+                delete f_enemies[i];
+                f_enemies.erase(f_enemies.begin() + i);
+            }
+            else
+            {
+                player->update_health();
+            };
         }
     }
-
     // // Collision with SECOND Enemies
     std::vector<Enemy2 *> s_enemies = map->getSEnemies();
     for (int i = 0; i < s_enemies.size(); i++)
     {
         if (player->collided(s_enemies[i]->get_sprite()))
         {
+            player->collotionType(s_enemies[i]->get_sprite());
             player->update_health();
         }
     }
-
     // // Collision with Jailed Babies
     objects = map->getJailedBabies();
     for (int i = 0; i < objects.size(); i++)
@@ -78,7 +83,6 @@ bool Game::handleCollisions()
             map->free_baby(i);
         }
     }
-
     // // Collision with stars
     objects = map->getStars();
     for (int i = 0; i < objects.size(); i++)
@@ -89,7 +93,6 @@ bool Game::handleCollisions()
             player->update_score("star");
         }
     }
-
     // // Collision with diamonds
     objects = map->getDiamonds();
     for (int i = 0; i < objects.size(); i++)
@@ -100,7 +103,6 @@ bool Game::handleCollisions()
             player->update_score("diamond");
         }
     }
-
     // Collision with ground
     for (auto groundPart : map->getGround())
     {
@@ -109,7 +111,6 @@ bool Game::handleCollisions()
             return false;
         }
     }
-
     // // Collision with traps
     for (auto trap : map->getTraps())
     {
@@ -118,7 +119,6 @@ bool Game::handleCollisions()
             player->update_health();
         }
     }
-
     // // Collision with blocks
     for (auto block : map->getBlocks())
     {
@@ -127,7 +127,6 @@ bool Game::handleCollisions()
             return false;
         }
     }
-
     if (player->getEdges()[LEFT_INDEX] > worldBackground.getGlobalBounds().left &&
         player->getEdges()[UP_INDEX] > worldBackground.getGlobalBounds().top &&
         player->getEdges()[RIGHT_INDEX] < worldBackground.getGlobalBounds().left + worldBackground.getGlobalBounds().width &&
@@ -135,7 +134,6 @@ bool Game::handleCollisions()
     {
         return true;
     }
-
     return false;
 }
 
@@ -231,14 +229,6 @@ void Game::updateInput()
 }
 void Game::updateView()
 {
-    // updatev view if its in background area
-    // if (player->getPos().x > 0 &&
-    //     player->getPos().y > 0 &&
-    //     player->getPos().y < worldBackground.getGlobalBounds().height &&
-    //     player->getPos().x < worldBackground.getGlobalBounds().width)
-    // {
-    //     gameView.setCenter(player->getPos());
-    // }
     float x = player->getPos().x;
     float y = player->getPos().y;
     x = std::max(x, worldBackground.getGlobalBounds().left + WINDOWWIDTH / 2.f);
