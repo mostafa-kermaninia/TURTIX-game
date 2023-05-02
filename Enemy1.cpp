@@ -48,3 +48,17 @@ bool Enemy1::collided(sf::Sprite target)
     }
     return false;
 }
+bool Enemy1::is_in_world(sf::Sprite world)
+{
+    if (enemy.getGlobalBounds().left >= world.getGlobalBounds().left &&
+        enemy.getGlobalBounds().top >= world.getGlobalBounds().top &&
+        enemy.getGlobalBounds().left + enemy.getGlobalBounds().width <=
+            world.getGlobalBounds().left + world.getGlobalBounds().width &&
+        enemy.getGlobalBounds().top + enemy.getGlobalBounds().height <=
+         world.getGlobalBounds().top + world.getGlobalBounds().height)
+    {
+        return true;
+    }
+
+    return false;
+}

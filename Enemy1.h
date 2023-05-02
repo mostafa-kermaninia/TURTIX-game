@@ -27,6 +27,7 @@ public:
     void render(sf::RenderTarget &target);
     int get_dir();
     bool collided(sf::Sprite target);
+    bool is_in_world(sf::Sprite world);
 
     sf::Sprite get_sprite() { return enemy; }
 };

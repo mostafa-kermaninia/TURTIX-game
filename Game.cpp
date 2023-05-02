@@ -29,7 +29,7 @@ void Game::initView()
 }
 void Game::initMap()
 {
-    map = new Map();
+    map = new Map(worldBackground);
 }
 void Game::initPlayer()
 {
@@ -75,10 +75,10 @@ bool Game::handleCollisions()
         }
     }
     // // Collision with Jailed Babies
-    objects = map->getJailedBabies();
-    for (int i = 0; i < objects.size(); i++)
+    std::vector<BabyTurtle *> babies = map->getJailedBabies();
+    for (int i = 0; i < babies.size(); i++)
     {
-        if (player->collided(objects[i]))
+        if (player->collided(babies[i]->get_sprite()) && babies[i]->is_jailed())
         {
             map->free_baby(i);
         }
