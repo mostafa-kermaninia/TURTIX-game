@@ -7,6 +7,7 @@ void Game::initWindow()
     window->setFramerateLimit(144);
     window->setVerticalSyncEnabled(false);
 }
+
 void Game::initWorld()
 {
     if (!worldBackgroundTexture.loadFromFile("Textures/background.png"))
@@ -127,7 +128,6 @@ bool Game::handleCollisions()
         }
     }
 
-    
     if (player->getEdges()[LEFT_INDEX] > worldBackground.getGlobalBounds().left &&
         player->getEdges()[UP_INDEX] > worldBackground.getGlobalBounds().top &&
         player->getEdges()[RIGHT_INDEX] < worldBackground.getGlobalBounds().left + worldBackground.getGlobalBounds().width &&
@@ -135,7 +135,6 @@ bool Game::handleCollisions()
     {
         return true;
     }
-
 
     return false;
 }
@@ -233,13 +232,20 @@ void Game::updateInput()
 void Game::updateView()
 {
     // updatev view if its in background area
-    if (player->getPos().x > 0 &&
-        player->getPos().y > 0 &&
-        player->getPos().y < worldBackground.getGlobalBounds().height &&
-        player->getPos().x < worldBackground.getGlobalBounds().width)
-    {
-        gameView.setCenter(player->getPos());
-    }
+    // if (player->getPos().x > 0 &&
+    //     player->getPos().y > 0 &&
+    //     player->getPos().y < worldBackground.getGlobalBounds().height &&
+    //     player->getPos().x < worldBackground.getGlobalBounds().width)
+    // {
+    //     gameView.setCenter(player->getPos());
+    // }
+    float x = player->getPos().x;
+    float y = player->getPos().y;
+    x = std::max(x, worldBackground.getGlobalBounds().left + WINDOWWIDTH / 2.f);
+    x = std::min(x, worldBackground.getGlobalBounds().left + worldBackground.getGlobalBounds().width - WINDOWWIDTH / 2.f);
+    y = std::min(y, worldBackground.getGlobalBounds().top + worldBackground.getGlobalBounds().height - WINDOWHEIGHT / 2.f);
+    y = std::max(y, worldBackground.getGlobalBounds().top + WINDOWHEIGHT / 2.f);
+    gameView.setCenter(x, y);
 }
 void Game::update()
 {
