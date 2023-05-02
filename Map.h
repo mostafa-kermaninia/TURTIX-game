@@ -10,6 +10,7 @@
 #include <vector>
 #include "Enemy1.h"
 #include "Enemy2.h"
+#include "Baby_turtle.h"
 
 #define WINDOWHEIGHT 800
 #define WINDOWWIDTH 1300
@@ -66,11 +67,11 @@ private:
     std::vector<sf::Texture> textures;
 
     // game objects
+    sf::Sprite world_background;
     sf::Sprite portal;
     std::vector<Enemy1 *> f_enemies;
     std::vector<Enemy2 *> s_enemies;
-    std::vector<sf::Sprite> jailed_babies;
-    std::vector<sf::Sprite> free_babies;
+    std::vector<BabyTurtle *> babies;
     std::vector<sf::Sprite> stars;
     std::vector<sf::Sprite> diamonds;
     std::vector<sf::Sprite> ground;
@@ -86,7 +87,7 @@ private:
     void moveToPos(int xMove, int yMove, sf::Sprite &sprite);
 
 public:
-    Map();
+    Map(sf::Sprite world);
     virtual ~Map();
 
     // FUNCS
@@ -97,7 +98,7 @@ public:
     sf::Sprite getPortal() { return portal; }
     std::vector<Enemy1 *> getFEnemies() { return f_enemies; }
     std::vector<Enemy2 *> getSEnemies() { return s_enemies; }
-    std::vector<sf::Sprite> getJailedBabies() { return jailed_babies; }
+    std::vector<BabyTurtle *> getJailedBabies() { return babies; }
     std::vector<sf::Sprite> getStars() { return stars; }
     std::vector<sf::Sprite> getDiamonds() { return diamonds; }
     std::vector<sf::Sprite> getGround() { return ground; }

@@ -65,10 +65,12 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
 
     else if (object_char == JAILED_BABY)
     {
+        BabyTurtle *new_turtle = new BabyTurtle();
         new_sp.setTexture(textures[JAILED_BABY_INDEX]);
         new_sp.scale(0.1f, 0.08f);
         new_sp.move(initMoves(x_pos, y_pos));
-        jailed_babies.push_back(new_sp);
+        new_turtle->set_texture(new_sp);
+        babies.push_back(new_turtle);
     }
 
     else if (object_char == STAR)
@@ -134,8 +136,9 @@ void Map::moveToPos(int xMove, int yMove, sf::Sprite &sprite)
     sprite.move(xMove, yMove);
 }
 
-Map::Map()
+Map::Map(sf::Sprite world)
 {
+    world_background = world;
     initTexture();
     load_map();
 }
@@ -160,12 +163,10 @@ void Map::remove_object(std::string obj_name, int object_index)
 
 void Map::free_baby(int baby_index)
 {
-    sf::Sprite new_free_baby;
-    new_free_baby.setTexture(textures[FREE_BABY_INDEX]);
-    new_free_baby.scale(-0.1f, 0.12f);
-    new_free_baby.move(initMoves(jailed_babies[baby_index].getPosition().x / 50, jailed_babies[baby_index].getPosition().y / 50));
-    free_babies.push_back(new_free_baby);
-    jailed_babies.erase(jailed_babies.begin() + baby_index);
+    sf::Sprite baby_sprite = babies[baby_index]->get_sprite();
+    baby_sprite.scale(1.2f, 1.2f);
+    baby_sprite.setTexture(textures[FREE_BABY_INDEX], true);
+    babies[baby_index]->make_free(baby_sprite);
 }
 
 void Map::render(sf::RenderTarget &target)
@@ -174,20 +175,42 @@ void Map::render(sf::RenderTarget &target)
     {
         target.draw(ground[i]);
     }
-    for (Enemy1 *fe : f_enemies)
+    for (int i = 0; i < f_enemies.size(); i++)
     {
-        fe->render(target);
+        if (!f_enemies[i]->is_in_world(world_background))
+            f_enemies[i]->go_back();
+        for (auto g : ground)
+            if (f_enemies[i]->collided(g))
+                f_enemies[i]->go_back();
+        for (auto b : blocks)
+            if (f_enemies[i]->collided(b))
+                f_enemies[i]->go_back();
+        f_enemies[i]->render(target);
     }
-    for (Enemy2 *se : s_enemies)
+    for (int i = 0; i < s_enemies.size(); i++)
     {
-        se->render(target);
+        if (!s_enemies[i]->is_in_world(world_background))
+            s_enemies[i]->go_back();
+        for (auto g : ground)
+            if (s_enemies[i]->collided(g))
+                s_enemies[i]->go_back();
+        for (auto b : blocks)
+            if (s_enemies[i]->collided(b))
+                s_enemies[i]->go_back();
+        s_enemies[i]->render(target);
     }
-    for (sf::Sprite jb : jailed_babies)
+    for (int i = 0; i < babies.size(); i++)
     {
-        target.draw(jb);
+        if (!babies[i]->is_in_world(world_background))
+            babies[i]->go_back();
+        for (auto g : ground)
+            if (babies[i]->collided(g))
+                babies[i]->go_back();
+        for (auto b : blocks)
+            if (babies[i]->collided(b))
+                babies[i]->go_back();
+        babies[i]->render(target);
     }
-    for (sf::Sprite fb : free_babies)
-        target.draw(fb);
     for (sf::Sprite s : stars)
     {
         target.draw(s);

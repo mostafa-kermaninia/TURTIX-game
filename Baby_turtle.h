@@ -7,25 +7,22 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <cstdlib>
+#include <vector>
 #define RIGHT 1
 #define LEFT -1
 
-const int CHANGE_MODE_TIME = 300;
-
-class Enemy2
+class BabyTurtle
 {
 private:
-    sf::Sprite enemy;
+    sf::Sprite baby;
+    bool is_free;
     int direction;
-    float speed;
-    int state;
-    bool stabled;
+    float speed; 
 
-    bool is_change_time();
 public:
-    Enemy2(int offset);
-    ~Enemy2();
+    BabyTurtle();
+    ~BabyTurtle();
+    void make_free(sf::Sprite free_baby_sprite);
     void set_texture(sf::Sprite new_texture);
     void move();
     void go_back();
@@ -33,6 +30,6 @@ public:
     int get_dir();
     bool collided(sf::Sprite target);
     bool is_in_world(sf::Sprite world);
-
-    sf::Sprite get_sprite() { return enemy; }
+    bool is_jailed() { return !is_free; }
+    sf::Sprite get_sprite() { return baby; }
 };
