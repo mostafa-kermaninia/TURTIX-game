@@ -48,7 +48,7 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
     {
         Enemy1 *new_enemy = new Enemy1();
         new_sp.setTexture(textures[F_ENEMIE_INDEX]);
-        new_sp.scale(0.1f, 0.1f);
+        new_sp.scale(0.1f, 0.08f);
         new_sp.move(initMoves(x_pos, y_pos));
         new_enemy->set_texture(new_sp);
         f_enemies.push_back(new_enemy);
