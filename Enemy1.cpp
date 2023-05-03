@@ -5,6 +5,7 @@
 // constructor and distructor
 Enemy1::Enemy1()
 {
+    health = 2;
     speed = 1.f;
     direction = RIGHT;
 }
@@ -17,6 +18,11 @@ Enemy1::~Enemy1()
 void Enemy1::set_texture(sf::Sprite new_enemy)
 {
     enemy = new_enemy;
+}
+
+void Enemy1::update_health()
+{
+    health--;
 }
 
 void Enemy1::move()

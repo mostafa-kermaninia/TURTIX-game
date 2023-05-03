@@ -25,7 +25,7 @@ private:
     void initView();
     void initMap();
     void initPlayer();
-    bool handleCollisions();
+    bool handleCollisions(int direction);
 public:
     Game();
     virtual ~Game();

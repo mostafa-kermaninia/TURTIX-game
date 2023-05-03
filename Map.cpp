@@ -155,10 +155,24 @@ Map::~Map()
 void Map::remove_object(std::string obj_name, int object_index)
 {
     if (obj_name == "star")
-
         stars.erase(stars.begin() + object_index);
     else if (obj_name == "diamond")
         diamonds.erase(diamonds.begin() + object_index);
+    else if (obj_name == "Enemy1")
+    {
+        if (f_enemies[object_index]->get_health() == 1)
+        {
+            delete f_enemies[object_index];
+            f_enemies.erase(f_enemies.begin() + object_index);
+        }
+        else
+            f_enemies[object_index]->update_health();
+    }
+    else if (obj_name == "Enemy2")
+    {
+        delete s_enemies[object_index];
+        s_enemies.erase(s_enemies.begin() + object_index);
+    }
 }
 
 void Map::free_baby(int baby_index)

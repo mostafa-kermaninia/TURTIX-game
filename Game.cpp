@@ -8,6 +8,7 @@ void Game::initWindow()
     window->setVerticalSyncEnabled(false);
 }
 
+
 void Game::initSounds()
 {
     // sf::SoundBuffer buffer;
@@ -46,45 +47,51 @@ void Game::initPlayer()
     player = new Player();
 }
 
-bool Game::handleCollisions()
+bool Game::handleCollisions(int direction)
 {
     // if player is in world,it can move
     // update view if its in background area
     // // // handle collision with objects
+    // handle collision with objects
     std::vector<sf::Sprite> objects;
     // // Collision with PORTAL
     // if (player->collided(map->getPortal()))
     // {
     //     // return true;
     // }
-    // // Collision with FIRST Enemies
+    // Collision with FIRST Enemies
     std::vector<Enemy1 *> f_enemies = map->getFEnemies();
     for (int i = 0; i < f_enemies.size(); i++)
     {
         if (player->collided(f_enemies[i]->get_sprite()))
         {
-            if (player->collotionType(f_enemies[i]->get_sprite()) == TOP)
+            if (player->collosionType(f_enemies[i]->get_sprite(), direction) == DOWN)
             {
-                delete f_enemies[i];
-                f_enemies.erase(f_enemies.begin() + i);
+                map->remove_object("Enemy1", i);
             }
             else
             {
                 player->update_health();
-            };
+            }
+            break;
         }
     }
-    // // Collision with SECOND Enemies
+    // Collision with SECOND Enemies
     std::vector<Enemy2 *> s_enemies = map->getSEnemies();
     for (int i = 0; i < s_enemies.size(); i++)
     {
         if (player->collided(s_enemies[i]->get_sprite()))
         {
-            player->collotionType(s_enemies[i]->get_sprite());
-            player->update_health();
+            if (player->collosionType(s_enemies[i]->get_sprite(), direction) == DOWN)
+                map->remove_object("Enemy2", i);
+            else
+            {
+                player->update_health();
+            }
+            break;
         }
     }
-    // // Collision with Jailed Babies
+    // Collision with Jailed Babies
     std::vector<BabyTurtle *> babies = map->getJailedBabies();
     for (int i = 0; i < babies.size(); i++)
     {
@@ -93,7 +100,7 @@ bool Game::handleCollisions()
             map->free_baby(i);
         }
     }
-    // // Collision with stars
+    // Collision with stars
     objects = map->getStars();
     for (int i = 0; i < objects.size(); i++)
     {
@@ -103,7 +110,7 @@ bool Game::handleCollisions()
             player->update_score("star");
         }
     }
-    // // Collision with diamonds
+    // Collision with diamonds
     objects = map->getDiamonds();
     for (int i = 0; i < objects.size(); i++)
     {
@@ -121,7 +128,7 @@ bool Game::handleCollisions()
             return false;
         }
     }
-    // // Collision with traps
+    // Collision with traps
     for (auto trap : map->getTraps())
     {
         if (player->collided(trap))
@@ -129,7 +136,7 @@ bool Game::handleCollisions()
             player->update_health();
         }
     }
-    // // Collision with blocks
+    // Collision with blocks
     for (auto block : map->getBlocks())
     {
         if (player->collided(block))
@@ -189,6 +196,7 @@ void Game::updatePollEvents()
 }
 void Game::updateInput()
 {
+    handleCollisions(NO_MOVE);
     // Move Player
     bool canMove = true;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
@@ -198,7 +206,7 @@ void Game::updateInput()
             player->goBack();
         }
         player->move(-1.f, 0.f);
-        canMove = handleCollisions();
+        canMove = handleCollisions(LEFT);
         if (!canMove)
         {
             player->move(1.f, 0.f);
@@ -211,7 +219,7 @@ void Game::updateInput()
             player->goBack();
         }
         player->move(1.f, 0.f);
-        canMove = handleCollisions();
+        canMove = handleCollisions(RIGHT);
         if (!canMove)
         {
             player->move(-1.f, 0.f);
@@ -221,7 +229,7 @@ void Game::updateInput()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
     {
         player->move(0.f, 1.f);
-        canMove = handleCollisions();
+        canMove = handleCollisions(DOWN);
         if (!canMove)
         {
             player->move(0.f, -1.f);
@@ -230,7 +238,7 @@ void Game::updateInput()
     if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) && player->is_jumping_finished()) || !player->is_jumping_finished())
     {
         player->jump(0.f, -1.f);
-        canMove = handleCollisions();
+        canMove = handleCollisions(UP);
         if (!canMove)
         {
             player->undo_jump(0.f, 1.f);
