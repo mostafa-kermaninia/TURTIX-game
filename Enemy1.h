@@ -17,11 +17,13 @@ private:
     sf::Sprite enemy;
     int direction;
     float speed; 
+    int health;
   
 public:
     Enemy1();
     ~Enemy1();
     void set_texture(sf::Sprite new_texture);
+    void update_health();
     void move();
     void go_back();
     void render(sf::RenderTarget &target);
@@ -29,5 +31,6 @@ public:
     bool collided(sf::Sprite target);
     bool is_in_world(sf::Sprite world);
 
+    int get_health() { return health; }
     sf::Sprite get_sprite() { return enemy; }
 };

@@ -18,5 +18,5 @@ final_result: main.o Game.o Game.h Player.o Player.h Map.o Map.h Enemy1.h Enemy1
 	g++ --std=c++11 Map.o Player.o main.o Game.o Enemy1.o Enemy2.o Baby.o -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -o main.out
 run:
 	./main.out
-remove:
+remove: 
 	rm *.o

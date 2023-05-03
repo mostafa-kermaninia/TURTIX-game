@@ -6,11 +6,18 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <string>
+#include <cmath>
 #define WINDOWHEIGHT 800
 #define WINDOWWIDTH 1300
 #define GROUND 3800.f
 #define RIGHT 1
 #define LEFT -1
+#define SIDES 0
+#define UP 0
+#define DOWN 2
+#define NO_MOVE -1
+#define ERROR -1
+
 
 
 const double ACCELERATION = 0.25;
@@ -37,7 +44,6 @@ private:
     float jump_speed;
     int player_dir;
 
-    bool is_in_air;
     int jump_time;
     int health;
     int score;
@@ -66,9 +72,14 @@ public:
     void jump(const float dirX, const float dirY);
     void undo_jump(const float dirX, const float dirY);
     bool collided(sf::Sprite target);
+    int collosionType(sf::Sprite target, int direction);
     void update_score(std::string reward_name);
     void update_health();
     void goBack();
     void update();
     void render(sf::RenderTarget &target);
+    void undo_move(int direction);
+    std::pair<int, double> vertical_collosion_time(sf::Sprite target);
+    double collosion_time_solver(double distance);
+    std::pair<int, double> horizental_collosion_time(sf::Sprite target);
 };
