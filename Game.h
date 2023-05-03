@@ -20,6 +20,7 @@ private:
 
     // PRIVATE FUNCS
     void initWindow();
+    void initSounds();
     void initWorld();
     void initView();
     void initMap();

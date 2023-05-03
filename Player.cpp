@@ -106,12 +106,12 @@ int Player::collotionType(sf::Sprite target)
     //           << "[poiuyt]" << '\n';
     if (sprite.getGlobalBounds().top + sprite.getGlobalBounds().height <= target.getGlobalBounds().top)
     {
-        std::cout << "az basan kir khordam\n";
+        // std::cout << "az basan kir khordam\n";
         return TOP;
     }
     else
     {
-        std::cout << "az baghala kir khordam\n";
+        // std::cout << "az baghala kir khordam\n";
         return SIDES;
     }
     return ERROR;

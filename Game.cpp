@@ -8,6 +8,16 @@ void Game::initWindow()
     window->setVerticalSyncEnabled(false);
 }
 
+void Game::initSounds()
+{
+    // sf::SoundBuffer buffer;
+    // if (!buffer.loadFromFile(""))
+    // {
+    //     /* code */
+    // }
+    
+}
+
 void Game::initWorld()
 {
     if (!worldBackgroundTexture.loadFromFile("Textures/background.png"))

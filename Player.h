@@ -17,7 +17,7 @@
 
 
 
-const double ACCELERATION = 0.25;
+const double ACCELERATION = 0.1;
 const int JUMP_DURATION = 80;
 const int INITIAL_HEALTH = 3;
 const int STAR_SCORE = 5;
