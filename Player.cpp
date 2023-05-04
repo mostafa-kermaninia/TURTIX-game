@@ -115,7 +115,6 @@ int Player::collosionType(sf::Sprite target, int direction)
     else
         return v_time.first;
 }
-
 void Player::undo_move(int direction)
 {
     if (direction == LEFT)
@@ -149,7 +148,6 @@ std::pair<int, double> Player::vertical_collosion_time(sf::Sprite target)
     }
     return collosion_info;
 }
-
 double Player::collosion_time_solver(double distance)
 {
     double delta = pow(jump_speed, 2) + (2 * ACCELERATION * distance);
@@ -168,7 +166,6 @@ double Player::collosion_time_solver(double distance)
         return std::min(answer1, answer2);
     }
 }
-
 std::pair<int, double> Player::horizental_collosion_time(sf::Sprite target)
 {
     std::pair<int, double> collosion_info;

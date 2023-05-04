@@ -10,7 +10,7 @@
 #include <vector>
 #define RIGHT 1
 #define LEFT -1
-#define acceleration 0.25
+#define ACCELERATION 0.15
 
 
 class BabyTurtle
@@ -37,7 +37,7 @@ public:
     bool collided(sf::Sprite target);
     bool is_in_world(sf::Sprite world);
     bool is_jailed() { return !is_free; }
-    sf::Sprite get_sprite() { return baby; }
+    sf::Sprite *get_sprite() { return &baby; }
     bool is_it_on_ground(){
         return is_on_ground;
     }

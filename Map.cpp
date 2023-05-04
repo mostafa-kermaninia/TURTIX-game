@@ -8,10 +8,8 @@ sf::Vector2f Map::initMoves(int x_pos, int y_pos)
     y_pos *= 50;
     return sf::Vector2f((float)x_pos, (float)y_pos);
 }
-
 void Map::load_texture(std::string file_name)
 {
-
     sf::Texture new_texture;
     // LOAD TEXTURE FROM FILE
     if (!new_texture.loadFromFile(file_name))
@@ -21,14 +19,12 @@ void Map::load_texture(std::string file_name)
     else
         textures.push_back(new_texture);
 }
-
 void Map::initTexture()
 {
     // need change
     for (int i = 0; i < TEXTURE_NAME.size(); i++)
         load_texture(TEXTURE_SOURCE + TEXTURE_NAME[i]);
 }
-
 void Map::initSprites(char object_char, int y_pos, int x_pos)
 {
     sf::Sprite new_sp;
@@ -114,7 +110,6 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
         blocks.push_back(new_sp);
     }
 }
-
 void Map::load_map()
 {
     int num_of_line = 0;
@@ -130,7 +125,6 @@ void Map::load_map()
         }
     }
 }
-
 void Map::moveToPos(int xMove, int yMove, sf::Sprite &sprite)
 {
     sprite.move(xMove, yMove);
@@ -142,7 +136,6 @@ Map::Map(sf::Sprite world)
     initTexture();
     load_map();
 }
-
 Map::~Map()
 {
     for (int i = 0; i < f_enemies.size(); i++)
@@ -174,15 +167,13 @@ void Map::remove_object(std::string obj_name, int object_index)
         s_enemies.erase(s_enemies.begin() + object_index);
     }
 }
-
 void Map::free_baby(int baby_index)
 {
-    sf::Sprite baby_sprite = babies[baby_index]->get_sprite();
+    sf::Sprite baby_sprite = *babies[baby_index]->get_sprite();
     baby_sprite.scale(1.2f, 1.2f);
     baby_sprite.setTexture(textures[FREE_BABY_INDEX], true);
     babies[baby_index]->make_free(baby_sprite);
 }
-
 void Map::render(sf::RenderTarget &target)
 {
     for (int i = ground.size() - 1; i >= 0; i--)
@@ -215,9 +206,18 @@ void Map::render(sf::RenderTarget &target)
     }
     for (int i = 0; i < babies.size(); i++)
     {
-        babies[i]->is_on_ground = false;
         if (!babies[i]->is_in_world(world_background))
+        {
             babies[i]->go_back();
+        }
+        for (auto b : blocks)
+        {
+            if (babies[i]->collided(b))
+            {
+                babies[i]->go_back();
+            }
+        }
+        babies[i]->is_on_ground = false;
         for (auto g : ground)
         {
             if (babies[i]->collided(g))
@@ -227,9 +227,12 @@ void Map::render(sf::RenderTarget &target)
                 babies[i]->fallTime = 0;
             }
         }
-        for (auto b : blocks)
-            if (babies[i]->collided(b))
-                babies[i]->go_back();
+        if (babies[i]->is_on_ground == false)
+        {
+            babies[i]->get_sprite()->move(0, ACCELERATION * babies[i]->fallTime);
+            babies[i]->fallTime++;
+        }
+        babies[i]->move();
         babies[i]->render(target);
     }
     for (sf::Sprite s : stars)

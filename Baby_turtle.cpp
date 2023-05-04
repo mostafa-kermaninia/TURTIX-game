@@ -21,7 +21,6 @@ void BabyTurtle::make_free(sf::Sprite free_baby_sprite)
     set_texture(free_baby_sprite);
     is_free = true;
 }
-
 void BabyTurtle::set_texture(sf::Sprite new_baby)
 {
     baby = new_baby;
@@ -31,19 +30,10 @@ void BabyTurtle::move()
 {
     if (is_free)
         baby.move(speed * direction, 0);
-
-    for (auto part : groundParts)
-        if (is_it_on_ground())
-        {
-            return;
-        }
-    baby.move(0, acceleration * fallTime);
-    fallTime++;
 }
 void BabyTurtle::moveBack()
 {
-    baby.move(0, -acceleration * fallTime);
-    fallTime++;
+    baby.move(0, -ACCELERATION * fallTime);
 }
 
 void BabyTurtle::go_back()
@@ -56,7 +46,6 @@ void BabyTurtle::go_back()
 void BabyTurtle::render(sf::RenderTarget &target)
 {
     target.draw(baby);
-    move();
 }
 
 int BabyTurtle::get_dir()

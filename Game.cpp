@@ -7,8 +7,6 @@ void Game::initWindow()
     window->setFramerateLimit(144);
     window->setVerticalSyncEnabled(false);
 }
-
-
 void Game::initSounds()
 {
     // sf::SoundBuffer buffer;
@@ -18,7 +16,6 @@ void Game::initSounds()
     // }
     
 }
-
 void Game::initWorld()
 {
     if (!worldBackgroundTexture.loadFromFile("Textures/background.png"))
@@ -46,7 +43,6 @@ void Game::initPlayer()
 {
     player = new Player();
 }
-
 bool Game::handleCollisions(int direction)
 {
     // if player is in world,it can move
@@ -95,7 +91,7 @@ bool Game::handleCollisions(int direction)
     std::vector<BabyTurtle *> babies = map->getJailedBabies();
     for (int i = 0; i < babies.size(); i++)
     {
-        if (player->collided(babies[i]->get_sprite()) && babies[i]->is_jailed())
+        if (player->collided(*babies[i]->get_sprite()) && babies[i]->is_jailed())
         {
             map->free_baby(i);
         }
