@@ -21,6 +21,7 @@
 
 
 const double ACCELERATION = 0.1;
+const double G_ACCELERATION = 0.01;
 const int JUMP_DURATION = 80;
 const int INITIAL_HEALTH = 3;
 const int STAR_SCORE = 5;
@@ -45,6 +46,7 @@ private:
     int player_dir;
 
     int jump_time;
+    int gravity_time;
     int health;
     int score;
     // PRIVATE FUNCS
@@ -67,6 +69,7 @@ public:
         return sprite.getPosition();
     }
 
+    void set_jumping_time(int t) { jump_time = t ;}
     bool is_alive();
     bool is_jumping_finished();
     void move(const float dirX, const float dirY);
@@ -78,10 +81,12 @@ public:
     void update_health();
     void goBack();
     void update();
+    void gravity_effect(std::vector<sf::Sprite> ground);
     bool is_falling();
     void render(sf::RenderTarget &target);
     void undo_move(int direction);
     std::pair<int, double> vertical_collosion_time(sf::Sprite target);
     double collosion_time_solver(double distance);
     std::pair<int, double> horizental_collosion_time(sf::Sprite target);
+
 };

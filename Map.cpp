@@ -244,7 +244,7 @@ void Map::render(sf::RenderTarget &target)
         {
             delete babies[i];
             babies.erase(babies.begin() + i);
-        }        
+        }
     }
     for (sf::Sprite s : stars)
     {

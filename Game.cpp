@@ -48,17 +48,7 @@ void Game::initPlayer()
 }
 bool Game::handleCollisions(int direction)
 {
-    // if player is in world,it can move
-    // update view if its in background area
-    // // // handle collision with objects
-    // handle collision with objects
     std::vector<sf::Sprite> objects;
-    // // Collision with PORTAL
-    // if (player->collided(map->getPortal()))
-    // {
-    //     // return true;
-    // }
-    // Collision with FIRST Enemies
     std::vector<Enemy1 *> f_enemies = map->getFEnemies();
     for (int i = 0; i < f_enemies.size(); i++)
     {
@@ -67,12 +57,13 @@ bool Game::handleCollisions(int direction)
             if (player->collosionType(f_enemies[i]->get_sprite(), direction) == DOWN)
             {
                 map->remove_object("Enemy1", i);
+                player->set_jumping_time(1);
+                player->jump(0.f, -1.f);
             }
             else
             {
                 player->update_health();
             }
-            player->jump(0.f, -1.f);
             break;
         }
     }
@@ -82,15 +73,16 @@ bool Game::handleCollisions(int direction)
     {
         if (player->collided(s_enemies[i]->get_sprite()))
         {
-            if (player->collosionType(s_enemies[i]->get_sprite(), direction) == DOWN)
+            if (player->collosionType(s_enemies[i]->get_sprite(), direction) == DOWN && !s_enemies[i]->is_immortal())
             {
                 map->remove_object("Enemy2", i);
+                player->set_jumping_time(1);
+                player->jump(0.f, -1.f);
             }
             else
             {
                 player->update_health();
             }
-            player->jump(0.f, -1.f);
             break;
         }
     }
@@ -220,6 +212,7 @@ void Game::updatePollEvents()
 }
 void Game::updateInput()
 {
+    player->gravity_effect(map->getGround());
     handleCollisions(NO_MOVE);
     // Move Player
     bool canMove = true;

@@ -22,6 +22,7 @@ void Player::initSprite()
 
 Player::Player()
 {
+    gravity_time = 0;
     score = 0;
     health = INITIAL_HEALTH;
     jump_time = 1;
@@ -81,6 +82,7 @@ void Player::update_score(std::string reward_name)
 void Player::update_health()
 {
     health--;
+    sprite.setPosition(50.f, 1640.f);
 }
 void Player::goBack()
 {
@@ -91,9 +93,28 @@ void Player::update()
 {
 }
 
+void Player::gravity_effect(std::vector<sf::Sprite> ground)
+{
+    if (is_jumping_finished())
+    {
+        gravity_time++;
+        move(0, (G_ACCELERATION * gravity_time));
+        bool is_on_ground = false;
+        for (auto g : ground)
+        {
+            if (collided(g))
+            {
+                is_on_ground = true;
+                move(0, -(G_ACCELERATION * gravity_time));
+                gravity_time = 0;
+            }
+        }
+    }
+}
+
 bool Player::is_falling()
 {
-    return (jump_speed - ACCELERATION * jump_time) <= 0;
+    return (jump_speed - ACCELERATION * jump_time) <= 0 || gravity_time != 0;
 }
 
 void Player::render(sf::RenderTarget &target)
@@ -122,8 +143,7 @@ int Player::collosionType(sf::Sprite target, int direction)
     std::pair<int, double> v_time = vertical_collosion_time(target);
     std::pair<int, double> h_time = horizental_collosion_time(target);
     bool is_fall = is_falling();
-    jump_time = 2;
-    if (v_time.second > h_time.second)
+    if (v_time.second > h_time.second && !is_fall)
         return h_time.first;
     else if (v_time.first == DOWN && is_fall)
         return DOWN;
