@@ -34,6 +34,7 @@ public:
     int get_dir();
     bool collided(sf::Sprite target);
     bool is_in_world(sf::Sprite world);
+    bool is_immortal() { return !stabled; }
 
     sf::Sprite get_sprite() { return enemy; }
 };
