@@ -3,11 +3,12 @@
 // private functions
 
 // constructor and distructor
-BabyTurtle::BabyTurtle()
+BabyTurtle::BabyTurtle(std::vector<sf::Sprite> gParts)
 {
     speed = 1.f;
     direction = RIGHT;
     is_free = false;
+    groundParts = gParts;
 }
 BabyTurtle::~BabyTurtle()
 {
@@ -30,6 +31,19 @@ void BabyTurtle::move()
 {
     if (is_free)
         baby.move(speed * direction, 0);
+
+    for (auto part : groundParts)
+        if (is_it_on_ground())
+        {
+            return;
+        }
+    baby.move(0, acceleration * fallTime);
+    fallTime++;
+}
+void BabyTurtle::moveBack()
+{
+    baby.move(0, -acceleration * fallTime);
+    fallTime++;
 }
 
 void BabyTurtle::go_back()
@@ -42,7 +56,6 @@ void BabyTurtle::go_back()
 void BabyTurtle::render(sf::RenderTarget &target)
 {
     target.draw(baby);
-    move();
 }
 
 int BabyTurtle::get_dir()
@@ -62,13 +75,11 @@ bool BabyTurtle::is_in_world(sf::Sprite world)
     if (baby.getGlobalBounds().left >= world.getGlobalBounds().left &&
         baby.getGlobalBounds().top >= world.getGlobalBounds().top &&
         baby.getGlobalBounds().left + baby.getGlobalBounds().width <=
-         world.getGlobalBounds().left + world.getGlobalBounds().width &&
-        baby.getGlobalBounds().top + baby.getGlobalBounds().height
-         <= world.getGlobalBounds().top + world.getGlobalBounds().height)
+            world.getGlobalBounds().left + world.getGlobalBounds().width &&
+        baby.getGlobalBounds().top + baby.getGlobalBounds().height <=
+            world.getGlobalBounds().top + world.getGlobalBounds().height)
     {
         return true;
     }
-
-
     return false;
 }

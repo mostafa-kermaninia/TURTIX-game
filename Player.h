@@ -12,7 +12,7 @@
 #define GROUND 3800.f
 #define RIGHT 1
 #define LEFT -1
-#define SIDES 0
+#define SIDES -5
 #define UP 0
 #define DOWN 2
 #define NO_MOVE -1
@@ -20,7 +20,7 @@
 
 
 
-const double ACCELERATION = 0.25;
+const double ACCELERATION = 0.1;
 const int JUMP_DURATION = 80;
 const int INITIAL_HEALTH = 3;
 const int STAR_SCORE = 5;
@@ -67,6 +67,7 @@ public:
         return sprite.getPosition();
     }
 
+    bool is_alive();
     bool is_jumping_finished();
     void move(const float dirX, const float dirY);
     void jump(const float dirX, const float dirY);
@@ -77,6 +78,7 @@ public:
     void update_health();
     void goBack();
     void update();
+    bool is_falling();
     void render(sf::RenderTarget &target);
     void undo_move(int direction);
     std::pair<int, double> vertical_collosion_time(sf::Sprite target);

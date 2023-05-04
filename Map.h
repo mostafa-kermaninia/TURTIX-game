@@ -93,8 +93,9 @@ public:
     // FUNCS
     void remove_object(std::string obj_name, int object_index);
     void free_baby(int baby_index);
+    bool rescued_all_babies();
     void render(sf::RenderTarget &target);
-    
+
     sf::Sprite getPortal() { return portal; }
     std::vector<Enemy1 *> getFEnemies() { return f_enemies; }
     std::vector<Enemy2 *> getSEnemies() { return s_enemies; }

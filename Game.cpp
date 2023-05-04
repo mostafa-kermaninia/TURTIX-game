@@ -8,6 +8,15 @@ void Game::initWindow()
     window->setVerticalSyncEnabled(false);
 }
 
+void Game::initSounds()
+{
+    // sf::SoundBuffer buffer;
+    // if (!buffer.loadFromFile(""))
+    // {
+    //     /* code */
+    // }
+}
+
 void Game::initWorld()
 {
     if (!worldBackgroundTexture.loadFromFile("Textures/background.png"))
@@ -40,6 +49,7 @@ bool Game::handleCollisions(int direction)
 {
     // if player is in world,it can move
     // update view if its in background area
+    // // // handle collision with objects
     // handle collision with objects
     std::vector<sf::Sprite> objects;
     // // Collision with PORTAL
@@ -61,6 +71,7 @@ bool Game::handleCollisions(int direction)
             {
                 player->update_health();
             }
+            player->jump(0.f, -1.f);
             break;
         }
     }
@@ -71,11 +82,14 @@ bool Game::handleCollisions(int direction)
         if (player->collided(s_enemies[i]->get_sprite()))
         {
             if (player->collosionType(s_enemies[i]->get_sprite(), direction) == DOWN)
+            {
                 map->remove_object("Enemy2", i);
+            }
             else
             {
                 player->update_health();
             }
+            player->jump(0.f, -1.f);
             break;
         }
     }
@@ -161,12 +175,28 @@ Game::~Game()
 // FUNCS
 void Game::run()
 {
-    while (window->isOpen())
+    while (window->isOpen() && !is_done())
     {
         update();
         render();
     }
 }
+
+bool Game::is_done()
+{
+    if (player->collided(map->getPortal()) && map->rescued_all_babies())
+    {
+        std::cout << "bordiiiii\n"; 
+        return true;
+    }
+    else if (!player->is_alive())
+    {
+        std::cout << "mordiiiiiiiiii\n";
+        // return true;
+    }
+    return false;
+}
+
 void Game::updatePollEvents()
 {
     sf::Event e;
@@ -264,8 +294,8 @@ void Game::render()
     window->setView(gameView);
 
     // DRAW all things
-    player->render(*window);
     map->render(*window);
+    player->render(*window);
 
     window->display();
 }
