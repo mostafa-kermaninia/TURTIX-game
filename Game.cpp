@@ -7,7 +7,10 @@ void Game::initWindow()
     window->setFramerateLimit(144);
     window->setVerticalSyncEnabled(false);
 }
-
+void Game::initMenu()
+{
+    menu = new Menu(window->getSize().x, window->getSize().y);
+}
 void Game::initSounds()
 {
     // sf::SoundBuffer buffer;
@@ -16,7 +19,6 @@ void Game::initSounds()
     //     /* code */
     // }
 }
-
 void Game::initWorld()
 {
     if (!worldBackgroundTexture.loadFromFile("Textures/background.png"))
@@ -158,7 +160,9 @@ bool Game::handleCollisions(int direction)
 // CON/DES
 Game::Game()
 {
+    canPlay = false;
     initWindow();
+    initMenu();
     initWorld();
     initView();
     initMap();
@@ -176,16 +180,20 @@ void Game::run()
 {
     while (window->isOpen() && !is_done())
     {
+        // while (!canPlay)
+        // {
+        //     menu->draw(*window);
+        // }
+
         update();
         render();
     }
 }
-
 bool Game::is_done()
 {
     if (player->collided(map->getPortal()) && map->rescued_all_babies())
     {
-        std::cout << "bordiiiii\n"; 
+        std::cout << "bordiiiii\n";
         return true;
     }
     else if (!player->is_alive())
@@ -195,7 +203,6 @@ bool Game::is_done()
     }
     return false;
 }
-
 void Game::updatePollEvents()
 {
     sf::Event e;
@@ -278,6 +285,10 @@ void Game::update()
     updateInput();
     updateView();
 }
+void Game::renderMenu()
+{
+    menu->draw(*window);
+}
 void Game::renderWorld()
 {
     window->draw(worldBackground);
@@ -285,13 +296,10 @@ void Game::renderWorld()
 void Game::render()
 {
     window->clear(sf::Color::Cyan);
-
     // Draw world
     renderWorld();
-
     // set view
     window->setView(gameView);
-
     // DRAW all things
     map->render(*window);
     player->render(*window);
