@@ -32,7 +32,7 @@ public:
 
     // FUNCS
     void run();
-
+    bool is_done();
     void updatePollEvents();
     void updateInput();
     void updateView();

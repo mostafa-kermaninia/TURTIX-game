@@ -86,7 +86,7 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
     else if (object_char == PORTAL)
     {
         new_sp.setTexture(textures[PORTAL_INDEX]);
-        new_sp.scale(0.08f, 0.08f);
+        new_sp.scale(0.11f, 0.11f);
         new_sp.move(initMoves(x_pos, y_pos));
         portal = new_sp;
     }
@@ -174,6 +174,12 @@ void Map::free_baby(int baby_index)
     baby_sprite.setTexture(textures[FREE_BABY_INDEX], true);
     babies[baby_index]->make_free(baby_sprite);
 }
+
+bool Map::rescued_all_babies()
+{
+    return babies.size() == 0;
+}
+
 void Map::render(sf::RenderTarget &target)
 {
     for (int i = ground.size() - 1; i >= 0; i--)
@@ -234,6 +240,11 @@ void Map::render(sf::RenderTarget &target)
         }
         babies[i]->move();
         babies[i]->render(target);
+        if (babies[i]->collided(portal))
+        {
+            delete babies[i];
+            babies.erase(babies.begin() + i);
+        }        
     }
     for (sf::Sprite s : stars)
     {

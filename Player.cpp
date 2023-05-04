@@ -17,7 +17,7 @@ void Player::initSprite()
     // Resize sprite
     sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y);
     sprite.scale(0.1f, 0.1f);
-    sprite.move(WINDOWWIDTH / 1.9, WINDOWHEIGHT / 1.9);
+    sprite.move(50, 1640);
 }
 
 Player::Player()
@@ -46,10 +46,17 @@ bool Player::is_jumping_finished()
     }
     return false;
 }
+
+bool Player::is_alive()
+{
+    return health > 0;
+}
+
 void Player::move(const float dirX, const float dirY)
 {
     sprite.move(movement_speed * dirX, movement_speed * dirY);
 }
+
 void Player::jump(const float dirX, const float dirY)
 {
     sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time) * dirY);
@@ -83,6 +90,12 @@ void Player::goBack()
 void Player::update()
 {
 }
+
+bool Player::is_falling()
+{
+    return (jump_speed - ACCELERATION * jump_time) <= 0;
+}
+
 void Player::render(sf::RenderTarget &target)
 {
     target.draw(sprite);
@@ -103,18 +116,21 @@ int Player::collosionType(sf::Sprite target, int direction)
 {
     if (direction != NO_MOVE)
     {
-        undo_move(direction);
         direction = (direction + 2) % 4;
+        undo_move(direction);
     }
     std::pair<int, double> v_time = vertical_collosion_time(target);
     std::pair<int, double> h_time = horizental_collosion_time(target);
+    bool is_fall = is_falling();
     jump_time = 2;
-    jump(0.f, -1.f);
     if (v_time.second > h_time.second)
         return h_time.first;
+    else if (v_time.first == DOWN && is_fall)
+        return DOWN;
     else
-        return v_time.first;
+        return SIDES;
 }
+
 void Player::undo_move(int direction)
 {
     if (direction == LEFT)
@@ -148,6 +164,7 @@ std::pair<int, double> Player::vertical_collosion_time(sf::Sprite target)
     }
     return collosion_info;
 }
+
 double Player::collosion_time_solver(double distance)
 {
     double delta = pow(jump_speed, 2) + (2 * ACCELERATION * distance);
@@ -166,6 +183,7 @@ double Player::collosion_time_solver(double distance)
         return std::min(answer1, answer2);
     }
 }
+
 std::pair<int, double> Player::horizental_collosion_time(sf::Sprite target)
 {
     std::pair<int, double> collosion_info;

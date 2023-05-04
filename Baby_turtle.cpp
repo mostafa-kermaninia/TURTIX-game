@@ -30,7 +30,16 @@ void BabyTurtle::move()
 {
     if (is_free)
         baby.move(speed * direction, 0);
+
+    for (auto part : groundParts)
+        if (is_it_on_ground())
+        {
+            return;
+        }
+    baby.move(0, ACCELERATION * fallTime);
+    fallTime++;
 }
+
 void BabyTurtle::moveBack()
 {
     baby.move(0, -ACCELERATION * fallTime);
