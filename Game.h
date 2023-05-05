@@ -1,12 +1,13 @@
 #pragma once
 #include "Player.h"
 #include "Map.h"
+#include "Menu.h"
 
 class Game
 {
 private:
     sf::RenderWindow *window;
-
+    Menu *menu;
     // World
     sf::Sprite worldBackground;
     sf::Texture worldBackgroundTexture;
@@ -20,16 +21,19 @@ private:
 
     // PRIVATE FUNCS
     void initWindow();
+    void initMenu();
     void initSounds();
     void initWorld();
     void initView();
     void initMap();
     void initPlayer();
     bool handleCollisions(int direction);
+
 public:
     Game();
     virtual ~Game();
 
+    bool canPlay;
     // FUNCS
     void run();
     bool is_done();
@@ -37,7 +41,7 @@ public:
     void updateInput();
     void updateView();
     void update();
+    void renderMenu();
     void renderWorld();
     void render();
-    
 };

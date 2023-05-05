@@ -12,6 +12,7 @@
 #define GROUND 3800.f
 #define RIGHT 1
 #define LEFT -1
+#define CLOSION_L 3
 #define SIDES -5
 #define UP 0
 #define DOWN 2
@@ -20,9 +21,9 @@
 
 
 
-const double ACCELERATION = 0.1;
+const double ACCELERATION = 0.25;
 const double G_ACCELERATION = 0.01;
-const int JUMP_DURATION = 80;
+const int JUMP_DURATION = 58;
 const int INITIAL_HEALTH = 3;
 const int STAR_SCORE = 5;
 const int DIAMOND_SCORE = 10;
@@ -81,6 +82,7 @@ public:
     void update_health();
     void goBack();
     void update();
+    bool is_on_ground(std::vector<sf::Sprite> ground);  
     void gravity_effect(std::vector<sf::Sprite> ground);
     bool is_falling();
     void render(sf::RenderTarget &target);

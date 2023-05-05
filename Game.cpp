@@ -4,10 +4,13 @@
 void Game::initWindow()
 {
     window = new sf::RenderWindow(sf::VideoMode(WINDOWWIDTH, WINDOWHEIGHT), "GAME SPACEEEE", sf::Style::Close | sf::Style::Titlebar);
-    window->setFramerateLimit(144);
+    window->setFramerateLimit(80);
     window->setVerticalSyncEnabled(false);
 }
-
+void Game::initMenu()
+{
+    menu = new Menu(window->getSize().x, window->getSize().y);
+}
 void Game::initSounds()
 {
     // sf::SoundBuffer buffer;
@@ -16,7 +19,6 @@ void Game::initSounds()
     //     /* code */
     // }
 }
-
 void Game::initWorld()
 {
     if (!worldBackgroundTexture.loadFromFile("Textures/background.png"))
@@ -55,6 +57,7 @@ bool Game::handleCollisions(int direction)
             if (player->collosionType(f_enemies[i]->get_sprite(), direction) == DOWN)
             {
                 map->remove_object("Enemy1", i);
+                player->undo_move(DOWN);
                 player->set_jumping_time(1);
                 player->jump(0.f, -1.f);
             }
@@ -74,6 +77,7 @@ bool Game::handleCollisions(int direction)
             if (player->collosionType(s_enemies[i]->get_sprite(), direction) == DOWN && !s_enemies[i]->is_immortal())
             {
                 map->remove_object("Enemy2", i);
+                player->undo_move(DOWN);
                 player->set_jumping_time(1);
                 player->jump(0.f, -1.f);
             }
@@ -90,7 +94,15 @@ bool Game::handleCollisions(int direction)
     {
         if (player->collided(*babies[i]->get_sprite()) && babies[i]->is_jailed())
         {
-            map->free_baby(i);
+            if (player->collosionType(*babies[i]->get_sprite(), direction) == DOWN)
+            {
+                map->free_baby(i);
+                player->undo_move(DOWN);
+                player->set_jumping_time(1);
+                player->jump(0.f, -1.f);
+            }
+            else
+                player->undo_move((direction + 2) % 4);
         }
     }
     // Collision with stars
@@ -150,7 +162,9 @@ bool Game::handleCollisions(int direction)
 // CON/DES
 Game::Game()
 {
+    canPlay = false;
     initWindow();
+    initMenu();
     initWorld();
     initView();
     initMap();
@@ -168,11 +182,15 @@ void Game::run()
 {
     while (window->isOpen() && !is_done())
     {
+        // while (!canPlay)
+        // {
+        //     menu->draw(*window);
+        // }
+
         update();
         render();
     }
 }
-
 bool Game::is_done()
 {
     if (player->collided(map->getPortal()) && map->rescued_all_babies())
@@ -182,12 +200,11 @@ bool Game::is_done()
     }
     else if (!player->is_alive())
     {
-        std::cout << "mordiiiiiiiiii\n";
+        // std::cout << "mordiiiiiiiiii\n";
         // return true;
     }
     return false;
 }
-
 void Game::updatePollEvents()
 {
     sf::Event e;
@@ -235,17 +252,9 @@ void Game::updateInput()
             player->move(-1.f, 0.f);
         }
     }
-    // pakesh konnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
-    {
-        player->move(0.f, 1.f);
-        canMove = handleCollisions(DOWN);
-        if (!canMove)
-        {
-            player->move(0.f, -1.f);
-        }
-    }
-    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) && player->is_jumping_finished()) || !player->is_jumping_finished())
+    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+             && player->is_on_ground(map->getGround())) 
+            || !player->is_jumping_finished())
     {
         player->jump(0.f, -1.f);
         canMove = handleCollisions(UP);
@@ -271,6 +280,10 @@ void Game::update()
     updateInput();
     updateView();
 }
+void Game::renderMenu()
+{
+    menu->draw(*window);
+}
 void Game::renderWorld()
 {
     window->draw(worldBackground);
@@ -278,13 +291,10 @@ void Game::renderWorld()
 void Game::render()
 {
     window->clear(sf::Color::Cyan);
-
     // Draw world
     renderWorld();
-
     // set view
     window->setView(gameView);
-
     // DRAW all things
     map->render(*window);
     player->render(*window);

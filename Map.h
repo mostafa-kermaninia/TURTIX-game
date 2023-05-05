@@ -43,7 +43,8 @@ const std::vector<std::string> TEXTURE_NAME = {
     "diamond.png",
     "portal.png",
     "trap.png",
-    "block.png"};
+    "block.png",
+    "Enemy2Freezed.png"};
 const std::vector<std::string> maps = {"map1", "map2", "map3"};
 
 enum
@@ -57,7 +58,8 @@ enum
     DIAMOND_INDEX,
     PORTAL_INDEX,
     TRAP_INDEX,
-    BLOCK_INDEX
+    BLOCK_INDEX,
+    ENEMY2_FREEZED_INDEX
 };
 
 class Map

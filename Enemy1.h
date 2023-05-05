@@ -25,6 +25,7 @@ public:
     void set_texture(sf::Sprite new_texture);
     void update_health();
     void move();
+    bool is_on_ground(sf::Sprite ground);
     void go_back();
     void render(sf::RenderTarget &target);
     int get_dir();

@@ -31,14 +31,9 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
     if (object_char == PLAY_GROUND)
     {
         new_sp.setTexture(textures[PLAY_GROUND_INDEX]);
-        new_sp.scale(0.05f, 0.55f);
+        new_sp.scale(0.05f, 0.40f);
         new_sp.move(initMoves(x_pos, y_pos));
         ground.push_back(new_sp);
-        sf::Sprite sec_sp;
-        sec_sp.setTexture(textures[PLAY_GROUND_INDEX]);
-        sec_sp.scale(0.05f, 0.55f);
-        sec_sp.move(initMoves(x_pos, y_pos + 1));
-        ground.push_back(sec_sp);
     }
     else if (object_char == F_ENEMIE)
     {
@@ -51,7 +46,7 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
     }
     else if (object_char == S_ENEMIE)
     {
-        Enemy2 *new_enemy = new Enemy2(s_enemies.size() * DELAY);
+        Enemy2 *new_enemy = new Enemy2(s_enemies.size() * DELAY, textures[S_ENEMIE_INDEX], textures[ENEMY2_FREEZED_INDEX]);
         new_sp.setTexture(textures[S_ENEMIE_INDEX]);
         new_sp.scale(0.1f, 0.1f);
         new_sp.move(initMoves(x_pos, y_pos));
@@ -63,7 +58,7 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
     {
         BabyTurtle *new_turtle = new BabyTurtle(ground);
         new_sp.setTexture(textures[JAILED_BABY_INDEX]);
-        new_sp.scale(0.1f, 0.08f);
+        new_sp.scale(0.1f, 0.1f);
         new_sp.move(initMoves(x_pos, y_pos));
         new_turtle->set_texture(new_sp);
         babies.push_back(new_turtle);
@@ -114,7 +109,7 @@ void Map::load_map()
 {
     int num_of_line = 0;
     std::fstream map_file;
-    map_file.open(maps[0]);
+    map_file.open(maps[1]);
     std::string line;
     while (getline(map_file, line))
     {
@@ -193,6 +188,15 @@ void Map::render(sf::RenderTarget &target)
         for (auto g : ground)
             if (f_enemies[i]->collided(g))
                 f_enemies[i]->go_back();
+        bool on_ground = false;
+        for (auto g : ground)
+            if (f_enemies[i]->is_on_ground(g))
+            {
+                on_ground = true;
+                break;
+            }
+        if (!on_ground)
+            f_enemies[i]->go_back();
         for (auto b : blocks)
             if (f_enemies[i]->collided(b))
                 f_enemies[i]->go_back();
@@ -205,6 +209,15 @@ void Map::render(sf::RenderTarget &target)
         for (auto g : ground)
             if (s_enemies[i]->collided(g))
                 s_enemies[i]->go_back();
+        bool on_ground = false;
+        for (auto g : ground)
+            if (s_enemies[i]->is_on_ground(g))
+            {
+                on_ground = true;
+                break;
+            }
+        if (!on_ground)
+            s_enemies[i]->go_back();
         for (auto b : blocks)
             if (s_enemies[i]->collided(b))
                 s_enemies[i]->go_back();
