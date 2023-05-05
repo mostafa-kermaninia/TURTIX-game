@@ -22,7 +22,19 @@
 #define MAP3_INDEX 2
 #define GO_BACK_INDEX 3
 
-class MainMenu
+enum PAGES
+{
+    MAP1_CODE,
+    MAP2_CODE,
+    MAP3_CODE,
+    MAIN_MENU_CODE,
+    MAP_LIST_CODE,
+    WIN_PAGE_CODE,
+    LOSE_PAGE_CODE
+
+};
+
+class Menu
 {
 private:
     int selectedItemIndex;
@@ -35,11 +47,28 @@ private:
     sf::Sprite listBackground;
 
 public:
-    MainMenu(float width, float height, int menuType);
-    ~MainMenu();
+    Menu(float width, float height, int menuType);
+    ~Menu();
 
+    void initMainMenu(float width, float height);
+    void initListMenu(float width, float height);
     void draw(sf::RenderWindow &window, int menuType);
-    void moveUp(int menuType);
-    void moveDown(int menuType);
-    int getPressedItem() { return selectedItemIndex; }
+    void mouseOn(int menuType,int textIndex);
+    void mouseOut(int menuType,int textIndex);
+    void setSelectedItem(int index) { selectedItemIndex = index;}
+    int getSelectedItem() { return selectedItemIndex; }
+    std::vector<sf::Text> getMenu()
+    {
+        int n = sizeof(menu) / sizeof(menu[0]);
+
+        std::vector<sf::Text> res(menu, menu + n);
+        return res;
+    }
+    std::vector<sf::Text> getList()
+    {
+        int n = sizeof(list) / sizeof(list[0]);
+
+        std::vector<sf::Text> res(list, list + n);
+        return res;
+    }
 };

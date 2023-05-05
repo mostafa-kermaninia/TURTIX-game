@@ -45,7 +45,7 @@ const std::vector<std::string> TEXTURE_NAME = {
     "trap.png",
     "block.png",
     "Enemy2Freezed.png"};
-const std::vector<std::string> maps = {"map1", "map2", "map3"};
+const std::vector<std::string> MAPS = {"map1", "map2", "map3"};
 
 enum
 {
@@ -85,14 +85,14 @@ private:
     void initTexture();
     void initSprites(char object_char, int y_pos, int x_pos);
     void load_texture(std::string file_name);
-    void load_map();
     void moveToPos(int xMove, int yMove, sf::Sprite &sprite);
 
 public:
-    Map(sf::Sprite world);
+    Map(sf::Sprite world,int mapCode);
     virtual ~Map();
 
     // FUNCS
+    void load_map(int mapCode);
     void remove_object(std::string obj_name, int object_index);
     void free_baby(int baby_index);
     bool rescued_all_babies();

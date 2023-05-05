@@ -105,11 +105,11 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
         blocks.push_back(new_sp);
     }
 }
-void Map::load_map()
+void Map::load_map(int mapCode)
 {
     int num_of_line = 0;
     std::fstream map_file;
-    map_file.open(maps[1]);
+    map_file.open(MAPS[mapCode]);
     std::string line;
     while (getline(map_file, line))
     {
@@ -125,11 +125,11 @@ void Map::moveToPos(int xMove, int yMove, sf::Sprite &sprite)
     sprite.move(xMove, yMove);
 }
 
-Map::Map(sf::Sprite world)
+Map::Map(sf::Sprite world,int mapCode)
 {
     world_background = world;
     initTexture();
-    load_map();
+    load_map(mapCode);
 }
 Map::~Map()
 {
@@ -169,12 +169,10 @@ void Map::free_baby(int baby_index)
     baby_sprite.setTexture(textures[FREE_BABY_INDEX], true);
     babies[baby_index]->make_free(baby_sprite);
 }
-
 bool Map::rescued_all_babies()
 {
     return babies.size() == 0;
 }
-
 void Map::render(sf::RenderTarget &target)
 {
     for (int i = ground.size() - 1; i >= 0; i--)

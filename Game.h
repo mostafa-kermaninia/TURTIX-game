@@ -3,15 +3,11 @@
 #include "Map.h"
 #include "Menu.h"
 
-#define MAIN_MENU_CODE 1
-#define MAP_LIST_CODE 2
-
-
 class Game
 {
 private:
     sf::RenderWindow *window;
-    MainMenu *mainMenu;
+    Menu *menu;
     // World
     sf::Sprite worldBackground;
     sf::Texture worldBackgroundTexture;
@@ -29,7 +25,7 @@ private:
     void initSounds();
     void initWorld();
     void initView();
-    void initMap();
+    void initMap(int mapCode);
     void initPlayer();
     bool handleCollisions(int direction);
 
@@ -37,7 +33,6 @@ public:
     Game();
     virtual ~Game();
 
-    bool canPlay;
     int curPage;
     // FUNCS
     void run();

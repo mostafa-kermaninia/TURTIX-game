@@ -9,7 +9,7 @@ void Game::initWindow()
 }
 void Game::initMenu()
 {
-    mainMenu = new MainMenu(window->getSize().x, window->getSize().y, curPage);
+    menu = new Menu(window->getSize().x, window->getSize().y, curPage);
 }
 void Game::initSounds()
 {
@@ -27,9 +27,6 @@ void Game::initWorld()
     }
     worldBackground.setTexture(worldBackgroundTexture);
 
-    // float scaleHeight = (float)WINDOWHEIGHT * 3 / BACKGROUNDHEIGHT;
-    // float scaleWidth = (float)WINDOWWIDTH * 3 / BACKGROUNDWIDTH;
-
     float scaleHeight = 0.1;
     float scaleWidth = 0.1;
     worldBackground.setScale(0.5, 0.5);
@@ -38,9 +35,9 @@ void Game::initView()
 {
     gameView = sf::View((sf::FloatRect(WINDOWWIDTH, WINDOWWIDTH, WINDOWWIDTH, WINDOWHEIGHT)));
 }
-void Game::initMap()
+void Game::initMap(int mapCode)
 {
-    map = new Map(worldBackground);
+    map = new Map(worldBackground, mapCode);
 }
 void Game::initPlayer()
 {
@@ -162,13 +159,12 @@ bool Game::handleCollisions(int direction)
 // CON/DES
 Game::Game()
 {
-    canPlay = false;
+    // canPlay = false;
     curPage = MAIN_MENU_CODE;
     initWindow();
     initMenu();
     initWorld();
     initView();
-    initMap();
     initPlayer();
 }
 Game::~Game()
@@ -181,16 +177,37 @@ Game::~Game()
 // FUNCS
 void Game::run()
 {
-    while (window->isOpen() && !is_done())
+    while (window->isOpen())
     {
-        while (!canPlay)
+        switch (curPage)
         {
+        case MAIN_MENU_CODE:
             updateMenu();
             renderMenu();
+            break;
+        case MAP_LIST_CODE:
+            updateMenu();
+            renderMenu();
+            break;
+        case MAP1_CODE:
+            updateGame();
+            renderGame();
+            break;
+        case MAP2_CODE:
+            updateGame();
+            renderGame();
+            break;
+        case MAP3_CODE:
+            updateGame();
+            renderGame();
+            break;
+        case WIN_PAGE_CODE:
+            // IS_DONE()
+            break;
+        case LOSE_PAGE_CODE:
+            //
+            break;
         }
-
-        updateGame();
-        renderGame();
     }
 }
 bool Game::is_done()
@@ -254,9 +271,7 @@ void Game::updateInput()
             player->move(-1.f, 0.f);
         }
     }
-    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
-             && player->is_on_ground(map->getGround())) 
-            || !player->is_jumping_finished())
+    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) && player->is_on_ground(map->getGround())) || !player->is_jumping_finished())
     {
         player->jump(0.f, -1.f);
         canMove = handleCollisions(UP);
@@ -297,50 +312,137 @@ void Game::updateMenu()
             {
                 window->close();
             }
-            else if (event.key.code == sf::Keyboard::Up)
-            {
-                mainMenu->moveUp(curPage);
-            }
-            else if (event.key.code == sf::Keyboard::Down)
-            {
-                mainMenu->moveDown(curPage);
-            }
+
             else if (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)
             {
-                if (curPage == MAIN_MENU_CODE)
-                {
-                    if (mainMenu->getPressedItem() == START_INDEX)
-                    {
-                        curPage = MAP_LIST_CODE;
-                        delete mainMenu;
+                // if (curPage == MAIN_MENU_CODE)
+                // {
+                //     if (menu->getSelectedItem() == START_INDEX)
+                //     {
+                //         curPage = MAP_LIST_CODE;
 
-                        mainMenu = new MainMenu(window->getSize().x, window->getSize().y, curPage);
-                    }
-                    else if (mainMenu->getPressedItem() == EXIT_INDEX)
+                //         delete menu;
+                //         menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                //     }
+                //     else if (menu->getSelectedItem() == EXIT_INDEX)
+                //     {
+                //         window->close();
+                //     }
+                // }
+                // else if (curPage == MAP_LIST_CODE)
+                // {
+                //     if (menu->getSelectedItem() == MAP1_INDEX)
+                //     {
+                //         curPage = MAP1_CODE;
+                //         initMap(MAP1_CODE);
+                //     }
+                //     else if (menu->getSelectedItem() == MAP2_INDEX)
+                //     {
+                //         curPage = MAP2_CODE;
+                //         initMap(MAP2_CODE);
+                //     }
+                //     else if (menu->getSelectedItem() == MAP3_INDEX)
+                //     {
+                //         curPage = MAP3_CODE;
+                //         initMap(MAP3_CODE);
+                //     }
+                //     else if (menu->getSelectedItem() == GO_BACK_INDEX)
+                //     {
+                //         curPage = MAIN_MENU_CODE;
+
+                //         delete menu;
+                //         menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                //     }
+                // }
+            }
+        }
+        if (event.type == sf::Event::MouseMoved)
+        {
+            if (curPage == MAIN_MENU_CODE)
+            {
+                for (int i = 0; i < menu->getMenu().size(); i++)
+                {
+                    if (menu->getMenu()[i].getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y))
                     {
-                        window->close();
+                        menu->mouseOn(curPage, i);
+                    }
+                    else
+                    {
+                        menu->mouseOut(curPage, i);
                     }
                 }
-                else if (curPage == MAP_LIST_CODE)
+            }
+            else if (curPage == MAP_LIST_CODE)
+            {
+                for (int i = 0; i < menu->getList().size(); i++)
                 {
-                    if (mainMenu->getPressedItem() == MAP1_INDEX)
+                    if (menu->getList()[i].getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y))
                     {
-                        canPlay = true;
+                        menu->mouseOn(curPage, i);
                     }
-                    else if (mainMenu->getPressedItem() == MAP2_INDEX)
+                    else
                     {
-                        canPlay = true;
+                        menu->mouseOut(curPage, i);
                     }
-                    else if (mainMenu->getPressedItem() == MAP3_INDEX)
+                }
+            }
+        }
+        if (event.type == sf::Event::MouseButtonPressed || event.mouseButton.button == sf::Mouse::Left)
+        {
+            int selected = -1;
+
+            if (curPage == MAIN_MENU_CODE)
+            {
+                for (int i = 0; i < menu->getMenu().size(); i++)
+                {
+                    if (menu->getMenu()[i].getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y))
                     {
-                        canPlay = true;
+                        selected = i;
                     }
-                    else if (mainMenu->getPressedItem() == GO_BACK_INDEX)
+                }
+
+                if (selected == START_INDEX)
+                {
+                    curPage = MAP_LIST_CODE;
+
+                    delete menu;
+                    menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                }
+                else if (selected == EXIT_INDEX)
+                {
+                    window->close();
+                }
+            }
+            else if (curPage == MAP_LIST_CODE)
+            {
+                for (int i = 0; i < menu->getList().size(); i++)
+                {
+                    if (menu->getList()[i].getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y))
                     {
-                        curPage = MAIN_MENU_CODE;
-                        delete mainMenu;
-                        mainMenu = new MainMenu(window->getSize().x, window->getSize().y, curPage);
+                        selected = i;
                     }
+                }
+
+                if (selected == MAP1_INDEX)
+                {
+                    curPage = MAP1_CODE;
+                    initMap(MAP1_CODE);
+                }
+                else if (selected == MAP2_INDEX)
+                {
+                    curPage = MAP2_CODE;
+                    initMap(MAP2_CODE);
+                }
+                else if (selected == MAP3_INDEX)
+                {
+                    curPage = MAP3_CODE;
+                    initMap(MAP3_CODE);
+                }
+                else if (selected == GO_BACK_INDEX)
+                {
+                    curPage = MAIN_MENU_CODE;
+                    delete menu;
+                    menu = new Menu(window->getSize().x, window->getSize().y, curPage);
                 }
             }
         }
@@ -349,7 +451,7 @@ void Game::updateMenu()
 void Game::renderMenu()
 {
     window->clear();
-    mainMenu->draw(*window, curPage);
+    menu->draw(*window, curPage);
     window->display();
 }
 void Game::renderWorld()
