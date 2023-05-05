@@ -107,4 +107,7 @@ public:
     {
         return score;
     }
+    int get_health(){
+        return health;
+    }
 };

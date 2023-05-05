@@ -39,13 +39,13 @@ void Game::initView()
 void Game::initScore()
 {
     font.loadFromFile("Fonts/Premier.ttf");
-    std::vector<sf::Text> finalVec(6);
+    std::vector<sf::Text> finalVec(9);
     for (int i = 0; i < finalVec.size(); i++)
     {
         finalVec[i].setFont(font);
         finalVec[i].scale(0.8f, 0.8f);
         finalVec[i].setFillColor(sf::Color::Black);
-        finalVec[i].setFillColor(sf::Color::Magenta);
+        finalVec[i].setFillColor(sf::Color::Cyan);
         finalVec[i].setOutlineColor(sf::Color::Black);
         finalVec[i].setOutlineThickness(5.f);
     }
@@ -176,6 +176,16 @@ bool Game::handleCollisions(int direction)
     return false;
 }
 
+std::string Game::make_heart(int count)
+{
+    std::string res = "";
+    for (int i = 0; i < count; i++)
+    {
+        res += "<3 ";
+    }
+    return res;
+}
+
 // CON/DES
 Game::Game()
 {
@@ -227,16 +237,19 @@ void Game::run()
             window->setView(default_view);
             renderMenu();
             updateMenu();
+            delete player;
+            initPlayer();
             break;
         case LOSE_PAGE_CODE:
             window->setView(default_view);
             updateMenu();
             renderMenu();
+            delete player;
+            initPlayer();
             break;
         }
     }
 }
-
 bool Game::is_in_game()
 {
     return curPage == MAP1_CODE || curPage == MAP2_CODE || curPage == MAP3_CODE;
@@ -539,15 +552,27 @@ void Game::updateMenu()
 void Game::updateScore()
 {
     scoreInfo[0].setString("DIAMONDS (*10) :");
+    scoreInfo[0].setFillColor(sf::Color(128, 128, 128));
     scoreInfo[1].setString(std::to_string(player->get_diamond_count()));
     scoreInfo[2].setString("STARS (*5) :");
+    scoreInfo[2].setFillColor(sf::Color(128, 128, 128));
     scoreInfo[3].setString(std::to_string(player->get_star_count()));
     scoreInfo[4].setString("TOTAL SCORE :");
+    scoreInfo[4].setFillColor(sf::Color(128, 128, 128));
     scoreInfo[5].setString(std::to_string(player->get_total_score()));
+    scoreInfo[6].setString("");
+    scoreInfo[7].setString("HP :");
+    scoreInfo[7].setFillColor(sf::Color(128, 128, 128));
+    scoreInfo[8].setString(make_heart(player->get_health()));
+    scoreInfo[8].setFillColor(sf::Color::Red);
 
     for (int i = 0; i < scoreInfo.size(); i++)
     {
-        scoreInfo[i].setPosition(window->getView().getCenter().x - window->getView().getSize().x / 2.f + 10.f, window->getView().getCenter().y - window->getView().getSize().y / 2.f + 30 * i + 10.f);
+        int dirX = window->getView().getCenter().x - window->getView().getSize().x / 2.f;
+        int dirY = window->getView().getCenter().y - window->getView().getSize().y / 2.f;
+        float offsetX = 10.f;
+        float offsetY = 30 * i + 10.f;
+        scoreInfo[i].setPosition(dirX + offsetX, dirY + offsetY);
     }
 }
 void Game::renderMenu()

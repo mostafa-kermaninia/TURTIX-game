@@ -35,6 +35,8 @@ private:
     void initPlayer();
     bool is_in_game();
     bool handleCollisions(int direction);
+    std::string make_heart(int count);
+
 
 public:
     Game();
