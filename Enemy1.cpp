@@ -1,19 +1,11 @@
 #include "Enemy1.h"
 
-// private functions
-
-// constructor and distructor
 Enemy1::Enemy1()
 {
     health = 2;
     speed = 1.f;
     direction = RIGHT;
 }
-Enemy1::~Enemy1()
-{
-}
-
-// FUNCS
 
 void Enemy1::set_texture(sf::Sprite new_enemy)
 {
@@ -30,31 +22,12 @@ void Enemy1::move()
     enemy.move(speed * direction, 0);
 }
 
-bool Enemy1::is_on_ground(sf::Sprite ground)
-{
-    bool on_ground = false;
-    enemy.move(50 * direction, 50 * speed);
-    on_ground = collided(ground);
-    enemy.move(-50 * direction, -50 * speed);
-    return on_ground;
-}
-
 void Enemy1::go_back()
 {
     direction *= -1;
     enemy.scale(-1.f, 1.f);
 }
 
-void Enemy1::render(sf::RenderTarget &target)
-{
-    target.draw(enemy);
-    move();
-}
-
-int Enemy1::get_dir()
-{
-    return direction;
-}
 bool Enemy1::collided(sf::Sprite target)
 {
     if (enemy.getGlobalBounds().intersects(target.getGlobalBounds()))
@@ -63,6 +36,16 @@ bool Enemy1::collided(sf::Sprite target)
     }
     return false;
 }
+
+bool Enemy1::is_on_ground(sf::Sprite ground)
+{
+    bool on_ground = false;
+    enemy.move(MOVEMENT_VALUE * direction, MOVEMENT_VALUE * speed);
+    on_ground = collided(ground);
+    enemy.move(-MOVEMENT_VALUE * direction, -MOVEMENT_VALUE * speed);
+    return on_ground;
+}
+
 bool Enemy1::is_in_world(sf::Sprite world)
 {
     if (enemy.getGlobalBounds().left >= world.getGlobalBounds().left &&
@@ -76,4 +59,24 @@ bool Enemy1::is_in_world(sf::Sprite world)
     }
 
     return false;
+}
+
+int Enemy1::get_dir()
+{
+    return direction;
+}
+
+int Enemy1::get_health()
+{
+    return health;
+}
+sf::Sprite Enemy1::get_sprite()
+{
+    return enemy;
+}
+
+void Enemy1::render(sf::RenderTarget &target)
+{
+    target.draw(enemy);
+    move();
 }

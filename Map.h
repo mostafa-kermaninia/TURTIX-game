@@ -19,6 +19,7 @@
 
 #define RIGHT 1
 #define LEFT -1
+#define MOVEMENT_VALUE 50
 
 const int DELAY = 50;
 
@@ -42,8 +43,6 @@ const std::vector<std::string> TEXTURE_NAME = {
     "star.png",
     "diamond.png",
     "portal.png",
-    "trap.png",
-    "block.png",
     "Enemy2Freezed.png"};
 const std::vector<std::string> MAPS = {"map1", "map2", "map3"};
 
@@ -57,8 +56,6 @@ enum
     STAR_INDEX,
     DIAMOND_INDEX,
     PORTAL_INDEX,
-    TRAP_INDEX,
-    BLOCK_INDEX,
     ENEMY2_FREEZED_INDEX
 };
 
@@ -68,7 +65,7 @@ private:
     int map_number;
     std::vector<sf::Texture> textures;
     std::vector<sf::Sprite> babies_texture;
-    // game objects
+
     sf::Sprite world_background;
     sf::Sprite portal;
     std::vector<Enemy1 *> f_enemies;
@@ -80,32 +77,37 @@ private:
     std::vector<sf::Sprite> traps;
     std::vector<sf::Sprite> blocks;
 
-    // PRIVATE FUNCS
-    sf::Vector2f initMoves(int x_pos, int y_pos);
-    void initTexture();
-    void initSprites(char object_char, int y_pos, int x_pos);
+    sf::Vector2f init_moves(int x_pos, int y_pos);
     void load_texture(std::string file_name);
-    void moveToPos(int xMove, int yMove, sf::Sprite &sprite);
+    void init_texture();
+    void init_ground(int y_pos, int x_pos);
+    void init_f_enemy(int y_pos, int x_pos);
+    void init_s_enemy(int y_pos, int x_pos);
+    void init_baby(int y_pos, int x_pos);
+    void init_star(int y_pos, int x_pos);
+    void init_diamond(int y_pos, int x_pos);
+    void init_portal(int y_pos, int x_pos);
+    void init_sprites(char object_char, int y_pos, int x_pos);
     void load_baby_turtles();
 
 public:
     Map(sf::Sprite world,int mapCode);
     virtual ~Map();
 
-    // FUNCS
     void load_map(int mapCode);
     void remove_object(std::string obj_name, int object_index);
     void free_baby(int baby_index);
     bool rescued_all_babies();
+    void render_f_enemy(Enemy1 *f_enemy, sf::RenderTarget &target);
+    void render_s_enemy(Enemy2 *s_enemy, sf::RenderTarget &target);
+    void render_baby(BabyTurtle *baby, sf::RenderTarget &target);
     void render(sf::RenderTarget &target);
 
-    sf::Sprite getPortal() { return portal; }
-    std::vector<Enemy1 *> getFEnemies() { return f_enemies; }
-    std::vector<Enemy2 *> getSEnemies() { return s_enemies; }
-    std::vector<BabyTurtle *> getJailedBabies() { return babies; }
-    std::vector<sf::Sprite> getStars() { return stars; }
-    std::vector<sf::Sprite> getDiamonds() { return diamonds; }
-    std::vector<sf::Sprite> getGround() { return ground; }
-    std::vector<sf::Sprite> getTraps() { return traps; }
-    std::vector<sf::Sprite> getBlocks() { return blocks; }
+    sf::Sprite getPortal();
+    std::vector<Enemy1 *> getFEnemies();
+    std::vector<Enemy2 *> getSEnemies();
+    std::vector<BabyTurtle *> getJailedBabies();
+    std::vector<sf::Sprite> getStars();
+    std::vector<sf::Sprite> getDiamonds();
+    std::vector<sf::Sprite> getGround();
 };

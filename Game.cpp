@@ -36,6 +36,21 @@ void Game::initView()
 {
     gameView = sf::View((sf::FloatRect(WINDOWWIDTH, WINDOWWIDTH, WINDOWWIDTH, WINDOWHEIGHT)));
 }
+void Game::initScore()
+{
+    font.loadFromFile("Fonts/Premier.ttf");
+    std::vector<sf::Text> finalVec(9);
+    for (int i = 0; i < finalVec.size(); i++)
+    {
+        finalVec[i].setFont(font);
+        finalVec[i].scale(0.8f, 0.8f);
+        finalVec[i].setFillColor(sf::Color::Black);
+        finalVec[i].setFillColor(sf::Color::Cyan);
+        finalVec[i].setOutlineColor(sf::Color::Black);
+        finalVec[i].setOutlineThickness(5.f);
+    }
+    scoreInfo = finalVec;
+}
 void Game::initMap(int mapCode)
 {
     map = new Map(worldBackground, mapCode);
@@ -135,22 +150,6 @@ bool Game::handleCollisions(int direction)
             return false;
         }
     }
-    // Collision with traps
-    for (auto trap : map->getTraps())
-    {
-        if (player->collided(trap))
-        {
-            player->update_health();
-        }
-    }
-    // Collision with blocks
-    for (auto block : map->getBlocks())
-    {
-        if (player->collided(block))
-        {
-            return false;
-        }
-    }
     if (player->getEdges()[LEFT_INDEX] > worldBackground.getGlobalBounds().left &&
         player->getEdges()[UP_INDEX] > worldBackground.getGlobalBounds().top &&
         player->getEdges()[RIGHT_INDEX] < worldBackground.getGlobalBounds().left + worldBackground.getGlobalBounds().width &&
@@ -159,6 +158,16 @@ bool Game::handleCollisions(int direction)
         return true;
     }
     return false;
+}
+
+std::string Game::make_heart(int count)
+{
+    std::string res = "";
+    for (int i = 0; i < count; i++)
+    {
+        res += "<3 ";
+    }
+    return res;
 }
 
 // CON/DES
@@ -171,6 +180,7 @@ Game::Game()
     initWorld();
     initView();
     initPlayer();
+    initScore();
 }
 Game::~Game()
 {
@@ -211,16 +221,19 @@ void Game::run()
             window->setView(default_view);
             renderMenu();
             updateMenu();
+            delete player;
+            initPlayer();
             break;
         case LOSE_PAGE_CODE:
             window->setView(default_view);
             updateMenu();
             renderMenu();
+            delete player;
+            initPlayer();
             break;
         }
     }
 }
-
 bool Game::is_in_game()
 {
     return curPage == MAP1_CODE || curPage == MAP2_CODE || curPage == MAP3_CODE;
@@ -231,14 +244,13 @@ void Game::check_end_game()
     {
         curPage = WIN_PAGE_CODE;
         delete menu;
-        menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+        menu = new Menu(window->getSize().x, window->getSize().y, curPage, player->get_total_score(), player->get_diamond_count(), player->get_star_count());
     }
     else if (!player->is_alive() && is_in_game())
     {
-        // curPage = WIN_PAGE_CODE;
         curPage = LOSE_PAGE_CODE;
         delete menu;
-        menu = new Menu(window->getPosition().x, window->getPosition().y, curPage);
+        menu = new Menu(window->getPosition().x, window->getPosition().y, curPage, player->get_total_score(), player->get_diamond_count(), player->get_star_count());
     }
 }
 void Game::updatePollEvents()
@@ -315,6 +327,7 @@ void Game::updateGame()
     updatePollEvents();
     updateInput();
     updateView();
+    updateScore();
 }
 void Game::updateMenu()
 {
@@ -442,11 +455,44 @@ void Game::updateMenu()
         }
     }
 }
+void Game::updateScore()
+{
+    scoreInfo[0].setString("DIAMONDS (*10) :");
+    scoreInfo[0].setFillColor(sf::Color(128, 128, 128));
+    scoreInfo[1].setString(std::to_string(player->get_diamond_count()));
+    scoreInfo[2].setString("STARS (*5) :");
+    scoreInfo[2].setFillColor(sf::Color(128, 128, 128));
+    scoreInfo[3].setString(std::to_string(player->get_star_count()));
+    scoreInfo[4].setString("TOTAL SCORE :");
+    scoreInfo[4].setFillColor(sf::Color(128, 128, 128));
+    scoreInfo[5].setString(std::to_string(player->get_total_score()));
+    scoreInfo[6].setString("");
+    scoreInfo[7].setString("HP :");
+    scoreInfo[7].setFillColor(sf::Color(128, 128, 128));
+    scoreInfo[8].setString(make_heart(player->get_health()));
+    scoreInfo[8].setFillColor(sf::Color::Red);
+
+    for (int i = 0; i < scoreInfo.size(); i++)
+    {
+        int dirX = window->getView().getCenter().x - window->getView().getSize().x / 2.f;
+        int dirY = window->getView().getCenter().y - window->getView().getSize().y / 2.f;
+        float offsetX = 10.f;
+        float offsetY = 30 * i + 10.f;
+        scoreInfo[i].setPosition(dirX + offsetX, dirY + offsetY);
+    }
+}
 void Game::renderMenu()
 {
     window->clear();
     menu->draw(*window, curPage);
     window->display();
+}
+void Game::renderScore()
+{
+    for (auto text : scoreInfo)
+    {
+        window->draw(text);
+    }
 }
 void Game::renderWorld()
 {
@@ -462,6 +508,7 @@ void Game::renderGame()
     // DRAW all things
     map->render(*window);
     player->render(*window);
+    renderScore();
 
     window->display();
 }

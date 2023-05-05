@@ -1,29 +1,5 @@
 #include "Enemy2.h"
 
-// private functions
-
-// constructor and distructor
-Enemy2::Enemy2(int offset, sf::Texture n_texture, sf::Texture f_texture)
-{
-    normal_texture = n_texture;
-    freezed_texture = f_texture;
-    srand((unsigned)(time(NULL) + offset));
-    state = rand() % 300;
-    stabled = false;
-    speed = 1.f;
-    direction = RIGHT;
-}
-Enemy2::~Enemy2()
-{
-}
-
-// FUNCS
-
-void Enemy2::set_texture(sf::Sprite new_enemy)
-{
-    enemy = new_enemy;
-}
-
 bool Enemy2::is_change_time()
 {
     if (state % CHANGE_MODE_TIME == 0)
@@ -35,6 +11,22 @@ bool Enemy2::is_change_time()
         return true;
     }
     return false;
+}
+
+Enemy2::Enemy2(int offset, sf::Texture n_texture, sf::Texture f_texture)
+{
+    normal_texture = n_texture;
+    freezed_texture = f_texture;
+    srand((unsigned)(time(NULL) + offset));
+    state = rand() % CHANGE_MODE_TIME;
+    stabled = false;
+    speed = 1.f;
+    direction = RIGHT;
+}
+
+void Enemy2::set_texture(sf::Sprite new_enemy)
+{
+    enemy = new_enemy;
 }
 
 void Enemy2::move()
@@ -49,31 +41,12 @@ void Enemy2::move()
     state++;
 }
 
-bool Enemy2::is_on_ground(sf::Sprite ground)
-{
-    bool on_ground = false;
-    enemy.move(50 * direction, 50 * speed);
-    on_ground = collided(ground);
-    enemy.move(-50 * direction, -50 * speed);
-    return on_ground;
-}
-
 void Enemy2::go_back()
 {
     direction *= -1;
     enemy.scale(-1.f, 1.f);
 }
 
-void Enemy2::render(sf::RenderTarget &target)
-{
-    target.draw(enemy);
-    move();
-}
-
-int Enemy2::get_dir()
-{
-    return direction;
-}
 bool Enemy2::collided(sf::Sprite target)
 {
     if (enemy.getGlobalBounds().intersects(target.getGlobalBounds()))
@@ -81,6 +54,15 @@ bool Enemy2::collided(sf::Sprite target)
         return true;
     }
     return false;
+}
+
+bool Enemy2::is_on_ground(sf::Sprite ground)
+{
+    bool on_ground = false;
+    enemy.move(MOVEMENT_VALUE * direction, MOVEMENT_VALUE * speed);
+    on_ground = collided(ground);
+    enemy.move(-MOVEMENT_VALUE * direction, -MOVEMENT_VALUE * speed);
+    return on_ground;
 }
 
 bool Enemy2::is_in_world(sf::Sprite world)
@@ -96,4 +78,25 @@ bool Enemy2::is_in_world(sf::Sprite world)
     }
 
     return false;
+}
+
+bool Enemy2::is_immortal()
+{
+    return stabled;
+}
+
+int Enemy2::get_dir()
+{
+    return direction;
+}
+
+sf::Sprite Enemy2::get_sprite()
+{
+    return enemy;
+}
+
+void Enemy2::render(sf::RenderTarget &target)
+{
+    target.draw(enemy);
+    move();
 }

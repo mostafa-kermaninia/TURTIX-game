@@ -14,6 +14,8 @@ private:
     // World
     sf::Sprite worldBackground;
     sf::Texture worldBackgroundTexture;
+    sf::Font font;
+    std::vector<sf::Text> scoreInfo;
 
     // // view
     sf::View gameView;
@@ -28,6 +30,7 @@ private:
     void initSounds();
     void initWorld();
     void initView();
+    void initScore();
     void initMap(int mapCode);
     void initPlayer();
     bool is_in_game();
@@ -40,13 +43,16 @@ public:
     int curPage;
     // FUNCS
     void run();
+    std::string make_heart(int count);
     void check_end_game();
     void updatePollEvents();
     void updateInput();
     void updateView();
     void updateGame();
     void updateMenu();
+    void updateScore();
     void renderWorld();
     void renderGame();
     void renderMenu();
+    void renderScore();
 };

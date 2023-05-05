@@ -8,30 +8,36 @@
 #include <fstream>
 #include <string>
 #include <vector>
+
 #define RIGHT 1
 #define LEFT -1
+#define MOVEMENT_VALUE 50
+
 
 class Enemy1
 {
 private:
     sf::Sprite enemy;
+    int health;
     int direction;
     float speed; 
-    int health;
   
 public:
     Enemy1();
-    ~Enemy1();
+
     void set_texture(sf::Sprite new_texture);
     void update_health();
+
     void move();
-    bool is_on_ground(sf::Sprite ground);
     void go_back();
-    void render(sf::RenderTarget &target);
-    int get_dir();
     bool collided(sf::Sprite target);
+    
+    bool is_on_ground(sf::Sprite ground);
     bool is_in_world(sf::Sprite world);
 
-    int get_health() { return health; }
-    sf::Sprite get_sprite() { return enemy; }
+    int get_dir();
+    int get_health();
+    sf::Sprite get_sprite();
+    
+    void render(sf::RenderTarget &target);
 };
