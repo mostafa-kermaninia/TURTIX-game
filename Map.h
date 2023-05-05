@@ -67,11 +67,10 @@ class Map
 private:
     int map_number;
     std::vector<sf::Texture> textures;
-
+    std::vector<sf::Sprite> babies_texture;
     // game objects
     sf::Sprite world_background;
     sf::Sprite portal;
-    std::vector<sf::Sprite> babies_texture;
     std::vector<Enemy1 *> f_enemies;
     std::vector<Enemy2 *> s_enemies;
     std::vector<BabyTurtle *> babies;
@@ -88,7 +87,7 @@ private:
     void load_texture(std::string file_name);
     void moveToPos(int xMove, int yMove, sf::Sprite &sprite);
     void load_baby_turtles();
-    
+
 public:
     Map(sf::Sprite world,int mapCode);
     virtual ~Map();

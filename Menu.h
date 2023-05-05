@@ -13,6 +13,7 @@
 #define NUM_OF_LIST_ITEMS 4
 #define START_INDEX 0
 #define EXIT_INDEX 1
+#define DEFAULT -1
 
 #define MAIN_MENU 1
 #define LIST_MENU 2
@@ -29,8 +30,8 @@ enum PAGES
     MAP3_CODE,
     MAIN_MENU_CODE,
     MAP_LIST_CODE,
-    WIN_PAGE_CODE,
-    LOSE_PAGE_CODE
+    LOSE_PAGE_CODE,
+    WIN_PAGE_CODE
 
 };
 
@@ -39,36 +40,34 @@ class Menu
 private:
     int selectedItemIndex;
     sf::Font font;
+    
     sf::Text menu[NUM_OF_MAIN_ITEMS];
     sf::Text list[NUM_OF_LIST_ITEMS];
+    
     sf::Texture mainTexture;
     sf::Texture listTexture;
+    sf::Texture winPageTexture;
+    sf::Texture losePageTexture;
+    
     sf::Sprite mainBackground;
     sf::Sprite listBackground;
-
+    sf::Sprite winPageBackground;
+    sf::Sprite losePageBackground;
 public:
     Menu(float width, float height, int menuType);
     ~Menu();
 
     void initMainMenu(float width, float height);
     void initListMenu(float width, float height);
+    void initWinPage(float width, float height);
+    void initLosePage(float width, float height);
     void draw(sf::RenderWindow &window, int menuType);
     void mouseOn(int menuType,int textIndex);
     void mouseOut(int menuType,int textIndex);
     void setSelectedItem(int index) { selectedItemIndex = index;}
     int getSelectedItem() { return selectedItemIndex; }
-    std::vector<sf::Text> getMenu()
-    {
-        int n = sizeof(menu) / sizeof(menu[0]);
+    void initFont();
+    std::vector<sf::Text> getMenu();
+    std::vector<sf::Text> getList();
 
-        std::vector<sf::Text> res(menu, menu + n);
-        return res;
-    }
-    std::vector<sf::Text> getList()
-    {
-        int n = sizeof(list) / sizeof(list[0]);
-
-        std::vector<sf::Text> res(list, list + n);
-        return res;
-    }
 };

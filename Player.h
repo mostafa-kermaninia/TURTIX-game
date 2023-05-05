@@ -74,6 +74,7 @@ public:
         return sprite.getPosition();
     }
 
+    void go_right();
     void set_jumping_time(int t) { jump_time = t ;}
     bool is_change_time();
     void change_mode();

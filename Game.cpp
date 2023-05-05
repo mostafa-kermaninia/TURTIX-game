@@ -6,6 +6,7 @@ void Game::initWindow()
     window = new sf::RenderWindow(sf::VideoMode(WINDOWWIDTH, WINDOWHEIGHT), "GAME SPACEEEE", sf::Style::Close | sf::Style::Titlebar);
     window->setFramerateLimit(80);
     window->setVerticalSyncEnabled(false);
+    default_view = window->getDefaultView();
 }
 void Game::initMenu()
 {
@@ -183,6 +184,7 @@ void Game::run()
 {
     while (window->isOpen())
     {
+        check_end_game();
         switch (curPage)
         {
         case MAIN_MENU_CODE:
@@ -206,27 +208,38 @@ void Game::run()
             renderGame();
             break;
         case WIN_PAGE_CODE:
-            // IS_DONE()
+            window->setView(default_view);
+            renderMenu();
+            updateMenu();
             break;
         case LOSE_PAGE_CODE:
-            //
+            window->setView(default_view);
+            updateMenu();
+            renderMenu();
             break;
         }
     }
 }
-bool Game::is_done()
+
+bool Game::is_in_game()
 {
-    if (player->collided(map->getPortal()) && map->rescued_all_babies())
+    return curPage == MAP1_CODE || curPage == MAP2_CODE || curPage == MAP3_CODE;
+}
+void Game::check_end_game()
+{
+    if ((is_in_game() && player->collided(map->getPortal()) && map->rescued_all_babies()))
     {
-        // std::cout << "bordiiiii\n";
-        return true;
+        curPage = WIN_PAGE_CODE;
+        delete menu;
+        menu = new Menu(window->getSize().x, window->getSize().y, curPage);
     }
-    else if (!player->is_alive())
+    else if (!player->is_alive() && is_in_game())
     {
-        // std::cout << "mordiiiiiiiiii\n";
-        // return true;
+        // curPage = WIN_PAGE_CODE;
+        curPage = LOSE_PAGE_CODE;
+        delete menu;
+        menu = new Menu(window->getPosition().x, window->getPosition().y, curPage);
     }
-    return false;
 }
 void Game::updatePollEvents()
 {
@@ -318,49 +331,6 @@ void Game::updateMenu()
             {
                 window->close();
             }
-
-            else if (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)
-            {
-                // if (curPage == MAIN_MENU_CODE)
-                // {
-                //     if (menu->getSelectedItem() == START_INDEX)
-                //     {
-                //         curPage = MAP_LIST_CODE;
-
-                //         delete menu;
-                //         menu = new Menu(window->getSize().x, window->getSize().y, curPage);
-                //     }
-                //     else if (menu->getSelectedItem() == EXIT_INDEX)
-                //     {
-                //         window->close();
-                //     }
-                // }
-                // else if (curPage == MAP_LIST_CODE)
-                // {
-                //     if (menu->getSelectedItem() == MAP1_INDEX)
-                //     {
-                //         curPage = MAP1_CODE;
-                //         initMap(MAP1_CODE);
-                //     }
-                //     else if (menu->getSelectedItem() == MAP2_INDEX)
-                //     {
-                //         curPage = MAP2_CODE;
-                //         initMap(MAP2_CODE);
-                //     }
-                //     else if (menu->getSelectedItem() == MAP3_INDEX)
-                //     {
-                //         curPage = MAP3_CODE;
-                //         initMap(MAP3_CODE);
-                //     }
-                //     else if (menu->getSelectedItem() == GO_BACK_INDEX)
-                //     {
-                //         curPage = MAIN_MENU_CODE;
-
-                //         delete menu;
-                //         menu = new Menu(window->getSize().x, window->getSize().y, curPage);
-                //     }
-                // }
-            }
         }
         if (event.type == sf::Event::MouseMoved)
         {
@@ -393,11 +363,12 @@ void Game::updateMenu()
                 }
             }
         }
-        if (event.type == sf::Event::MouseButtonPressed || event.mouseButton.button == sf::Mouse::Left)
+        if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
         {
-            int selected = -1;
-
-            if (curPage == MAIN_MENU_CODE)
+            int selected = DEFAULT;
+            switch (curPage)
+            {
+            case MAIN_MENU_CODE:
             {
                 for (int i = 0; i < menu->getMenu().size(); i++)
                 {
@@ -418,8 +389,9 @@ void Game::updateMenu()
                 {
                     window->close();
                 }
+                break;
             }
-            else if (curPage == MAP_LIST_CODE)
+            case MAP_LIST_CODE:
             {
                 for (int i = 0; i < menu->getList().size(); i++)
                 {
@@ -450,6 +422,22 @@ void Game::updateMenu()
                     delete menu;
                     menu = new Menu(window->getSize().x, window->getSize().y, curPage);
                 }
+                break;
+            }
+            case WIN_PAGE_CODE:
+            {
+                curPage = MAP_LIST_CODE;
+                delete menu;
+                menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                break;
+            }
+            case LOSE_PAGE_CODE:
+            {
+                curPage = MAP_LIST_CODE;
+                delete menu;
+                menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                break;
+            }
             }
         }
     }
@@ -465,7 +453,6 @@ void Game::renderWorld()
     window->draw(worldBackground);
 }
 void Game::renderGame()
-
 {
     window->clear();
     // Draw world

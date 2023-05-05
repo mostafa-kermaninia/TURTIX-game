@@ -37,6 +37,8 @@ void BabyTurtle::move()
         {
             return;
         }
+    baby.move(0, ACCELERATION * fallTime);
+    fallTime++;
 }
 
 void BabyTurtle::moveBack()
