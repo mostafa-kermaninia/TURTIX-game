@@ -3,11 +3,15 @@
 #include "Map.h"
 #include "Menu.h"
 
+#define MAIN_MENU_CODE 1
+#define MAP_LIST_CODE 2
+
+
 class Game
 {
 private:
     sf::RenderWindow *window;
-    Menu *menu;
+    MainMenu *mainMenu;
     // World
     sf::Sprite worldBackground;
     sf::Texture worldBackgroundTexture;
@@ -34,12 +38,12 @@ public:
     virtual ~Game();
 
     bool canPlay;
+    int curPage;
     // FUNCS
     void run();
     bool is_done();
     void updatePollEvents();
     void updateInput();
-    void updateMenuInput();
     void updateView();
     void updateGame();
     void updateMenu();

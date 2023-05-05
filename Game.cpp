@@ -9,7 +9,7 @@ void Game::initWindow()
 }
 void Game::initMenu()
 {
-    menu = new Menu(window->getSize().x, window->getSize().y);
+    mainMenu = new MainMenu(window->getSize().x, window->getSize().y, curPage);
 }
 void Game::initSounds()
 {
@@ -153,6 +153,7 @@ bool Game::handleCollisions(int direction)
 Game::Game()
 {
     canPlay = false;
+    curPage = MAIN_MENU_CODE;
     initWindow();
     initMenu();
     initWorld();
@@ -285,7 +286,9 @@ void Game::updateMenu()
     while (window->pollEvent(event))
     {
         if (event.type == sf::Event::Closed)
+        {
             window->close();
+        }
         if (event.type == sf::Event::KeyPressed)
         {
             if (event.key.code == sf::Keyboard::Escape)
@@ -294,25 +297,48 @@ void Game::updateMenu()
             }
             else if (event.key.code == sf::Keyboard::Up)
             {
-                menu->moveUp();
+                mainMenu->moveUp(curPage);
             }
             else if (event.key.code == sf::Keyboard::Down)
             {
-                menu->moveDown();
+                mainMenu->moveDown(curPage);
             }
             else if (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)
             {
-                if (menu->getPressedItem() == 0)
+                if (curPage == MAIN_MENU_CODE)
                 {
-                    canPlay = true;
+                    if (mainMenu->getPressedItem() == START_INDEX)
+                    {
+                        curPage = MAP_LIST_CODE;
+                        delete mainMenu;
+
+                        mainMenu = new MainMenu(window->getSize().x, window->getSize().y, curPage);
+                    }
+                    else if (mainMenu->getPressedItem() == EXIT_INDEX)
+                    {
+                        window->close();
+                    }
                 }
-                else if (menu->getPressedItem() == 1)
+                else if (curPage == MAP_LIST_CODE)
                 {
-                    std::cout << "nadarimmmmmm\n";
-                }
-                else if (menu->getPressedItem() == 2)
-                {
-                    window->close();
+                    if (mainMenu->getPressedItem() == MAP1_INDEX)
+                    {
+                        canPlay = true;
+                    }
+                    else if (mainMenu->getPressedItem() == MAP2_INDEX)
+                    {
+                        canPlay = true;
+                    }
+                    else if (mainMenu->getPressedItem() == MAP3_INDEX)
+                    {
+                        canPlay = true;
+                    }
+                    else if (mainMenu->getPressedItem() == GO_BACK_INDEX)
+                    {
+                        curPage = MAIN_MENU_CODE;
+                        delete mainMenu;
+                        mainMenu = new MainMenu(window->getSize().x, window->getSize().y, curPage);
+                    }
                 }
             }
         }
@@ -320,8 +346,8 @@ void Game::updateMenu()
 }
 void Game::renderMenu()
 {
-    window->clear(sf::Color(0, 85, 34));
-    menu->draw(*window);
+    window->clear();
+    mainMenu->draw(*window, curPage);
     window->display();
 }
 void Game::renderWorld()
@@ -330,7 +356,7 @@ void Game::renderWorld()
 }
 void Game::renderGame()
 {
-    window->clear(sf::Color::Cyan);
+    window->clear();
     // Draw world
     renderWorld();
     // set view
