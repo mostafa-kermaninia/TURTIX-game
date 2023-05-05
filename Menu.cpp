@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-Menu::Menu(float width, float height, int menuCode)
+Menu::Menu(float width, float height, int menuCode, int totalScore, int diamonds, int stars)
 {
     initFont();
     switch (menuCode)
@@ -12,17 +12,13 @@ Menu::Menu(float width, float height, int menuCode)
         initListMenu(width, height);
         break;
     case WIN_PAGE_CODE:
-        initWinPage(width, height);
+        initWinPage(width, height, totalScore, diamonds, stars);
         break;
     case LOSE_PAGE_CODE:
-        initLosePage(width, height);
+        initLosePage(width, height, totalScore, diamonds, stars);
         break;
     }
 }
-Menu::~Menu()
-{
-}
-
 void Menu::initFont()
 {
     if (!font.loadFromFile("Fonts/Ignorant.ttf"))
@@ -92,8 +88,29 @@ void Menu::initListMenu(float width, float height)
     listBackground.scale(0.8f, 0.8f);
     listBackground.move(-30, 0);
 }
-void Menu::initWinPage(float width, float height)
+void Menu::initWinPage(float width, float height, int totalScore, int diamonds, int stars)
 {
+    std::vector<sf::Text> finalVec(NUM_OF_PAGE_ITEMS);
+
+    finalVec[TOTAL_SCORE_INDEX].setFont(font);
+    finalVec[TOTAL_SCORE_INDEX].setFillColor(sf::Color::Black);
+    finalVec[TOTAL_SCORE_INDEX].setString(std::to_string(totalScore));
+    finalVec[TOTAL_SCORE_INDEX].setPosition(sf::Vector2f(width / 1.83, height / (NUM_OF_PAGE_ITEMS)*1.5));
+    finalVec[TOTAL_SCORE_INDEX].scale(1.0f, 1.0f);
+
+    finalVec[STARS_INDEX].setFont(font);
+    finalVec[STARS_INDEX].setFillColor(sf::Color::Black);
+    finalVec[STARS_INDEX].setString(std::to_string(stars));
+    finalVec[STARS_INDEX].setPosition(sf::Vector2f(width / 1.83, height / (NUM_OF_PAGE_ITEMS)*1.85));
+    finalVec[STARS_INDEX].scale(1.0f, 1.0f);
+
+    finalVec[DIAMONDS_INDEX].setFont(font);
+    finalVec[DIAMONDS_INDEX].setFillColor(sf::Color::Black);
+    finalVec[DIAMONDS_INDEX].setString(std::to_string(diamonds));
+    finalVec[DIAMONDS_INDEX].setPosition(sf::Vector2f(width / 1.83, height / (NUM_OF_PAGE_ITEMS)*2.06));
+    finalVec[DIAMONDS_INDEX].scale(1.0f, 1.0f);
+
+    winPage = finalVec;
     // LOAD TEXTURE FROM FILE
     if (!winPageTexture.loadFromFile("Textures/WinGame.png"))
     {
@@ -104,8 +121,30 @@ void Menu::initWinPage(float width, float height)
     winPageBackground.setPosition(sf::Vector2f(0.0f, 0.0f));
     winPageBackground.move(-70.f, 0.f);
 }
-void Menu::initLosePage(float width, float height)
+void Menu::initLosePage(float width, float height, int totalScore, int diamonds, int stars)
 {
+    std::vector<sf::Text> finalVec(NUM_OF_PAGE_ITEMS);
+
+    finalVec[TOTAL_SCORE_INDEX].setFont(font);
+    finalVec[TOTAL_SCORE_INDEX].setFillColor(sf::Color::Black);
+    finalVec[TOTAL_SCORE_INDEX].setString(std::to_string(totalScore));
+    finalVec[TOTAL_SCORE_INDEX].setPosition(sf::Vector2f(width * 2.05f, height * 2.83));
+    finalVec[TOTAL_SCORE_INDEX].scale(1.0f, 1.0f);
+
+    finalVec[STARS_INDEX].setFont(font);
+    finalVec[STARS_INDEX].setFillColor(sf::Color::Black);
+    finalVec[STARS_INDEX].setString(std::to_string(stars));
+    finalVec[STARS_INDEX].setPosition(sf::Vector2f(width * 2.08f, height * 3.38));
+    finalVec[STARS_INDEX].scale(1.0f, 1.0f);
+
+    finalVec[DIAMONDS_INDEX].setFont(font);
+    finalVec[DIAMONDS_INDEX].setFillColor(sf::Color::Black);
+    finalVec[DIAMONDS_INDEX].setString(std::to_string(diamonds));
+    finalVec[DIAMONDS_INDEX].setPosition(sf::Vector2f(width * 2.08f, height * 3.69));
+    finalVec[DIAMONDS_INDEX].scale(1.0f, 1.0f);
+
+    losePage = finalVec;
+
     // LOAD TEXTURE FROM FILE
     if (!losePageTexture.loadFromFile("Textures/LoseGame.png"))
     {
@@ -117,7 +156,6 @@ void Menu::initLosePage(float width, float height)
 
     losePageBackground.move(-70.f, 0.f);
 }
-
 std::vector<sf::Text> Menu::getMenu()
 {
     int n = sizeof(menu) / sizeof(menu[0]);
@@ -132,7 +170,6 @@ std::vector<sf::Text> Menu::getList()
     std::vector<sf::Text> res(list, list + n);
     return res;
 }
-
 void Menu::draw(sf::RenderWindow &window, int curPage)
 {
     switch (curPage)
@@ -153,9 +190,17 @@ void Menu::draw(sf::RenderWindow &window, int curPage)
         break;
     case WIN_PAGE_CODE:
         window.draw(winPageBackground);
+        for (int i = 0; i < NUM_OF_PAGE_ITEMS; i++)
+        {
+            window.draw(winPage[i]);
+        }
         break;
     case LOSE_PAGE_CODE:
         window.draw(losePageBackground);
+        for (int i = 0; i < NUM_OF_PAGE_ITEMS; i++)
+        {
+            window.draw(losePage[i]);
+        }
         break;
     }
 }
