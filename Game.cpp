@@ -172,25 +172,26 @@ void Game::run()
 {
     while (window->isOpen() && !is_done())
     {
-        // while (!canPlay)
-        // {
-        //     menu->draw(*window);
-        // }
+        while (!canPlay)
+        {
+            updateMenu();
+            renderMenu();
+        }
 
-        update();
-        render();
+        updateGame();
+        renderGame();
     }
 }
 bool Game::is_done()
 {
     if (player->collided(map->getPortal()) && map->rescued_all_babies())
     {
-        std::cout << "bordiiiii\n";
+        // std::cout << "bordiiiii\n";
         return true;
     }
     else if (!player->is_alive())
     {
-        std::cout << "mordiiiiiiiiii\n";
+        // std::cout << "mordiiiiiiiiii\n";
         // return true;
     }
     return false;
@@ -272,21 +273,62 @@ void Game::updateView()
     y = std::max(y, worldBackground.getGlobalBounds().top + WINDOWHEIGHT / 2.f);
     gameView.setCenter(x, y);
 }
-void Game::update()
+void Game::updateGame()
 {
     updatePollEvents();
     updateInput();
     updateView();
 }
+void Game::updateMenu()
+{
+    sf::Event event;
+    while (window->pollEvent(event))
+    {
+        if (event.type == sf::Event::Closed)
+            window->close();
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Escape)
+            {
+                window->close();
+            }
+            else if (event.key.code == sf::Keyboard::Up)
+            {
+                menu->moveUp();
+            }
+            else if (event.key.code == sf::Keyboard::Down)
+            {
+                menu->moveDown();
+            }
+            else if (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)
+            {
+                if (menu->getPressedItem() == 0)
+                {
+                    canPlay = true;
+                }
+                else if (menu->getPressedItem() == 1)
+                {
+                    std::cout << "nadarimmmmmm\n";
+                }
+                else if (menu->getPressedItem() == 2)
+                {
+                    window->close();
+                }
+            }
+        }
+    }
+}
 void Game::renderMenu()
 {
+    window->clear(sf::Color(0, 85, 34));
     menu->draw(*window);
+    window->display();
 }
 void Game::renderWorld()
 {
     window->draw(worldBackground);
 }
-void Game::render()
+void Game::renderGame()
 {
     window->clear(sf::Color::Cyan);
     // Draw world

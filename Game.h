@@ -39,9 +39,11 @@ public:
     bool is_done();
     void updatePollEvents();
     void updateInput();
+    void updateMenuInput();
     void updateView();
-    void update();
-    void renderMenu();
+    void updateGame();
+    void updateMenu();
     void renderWorld();
-    void render();
+    void renderGame();
+    void renderMenu();
 };

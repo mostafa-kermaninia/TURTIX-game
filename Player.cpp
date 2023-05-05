@@ -47,17 +47,14 @@ bool Player::is_jumping_finished()
     }
     return false;
 }
-
 bool Player::is_alive()
 {
     return health > 0;
 }
-
 void Player::move(const float dirX, const float dirY)
 {
     sprite.move(movement_speed * dirX, movement_speed * dirY);
 }
-
 void Player::jump(const float dirX, const float dirY)
 {
     sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time) * dirY);
@@ -92,7 +89,6 @@ void Player::goBack()
 void Player::update()
 {
 }
-
 void Player::gravity_effect(std::vector<sf::Sprite> ground)
 {
     if (is_jumping_finished())
@@ -111,12 +107,10 @@ void Player::gravity_effect(std::vector<sf::Sprite> ground)
         }
     }
 }
-
 bool Player::is_falling()
 {
     return (jump_speed - ACCELERATION * jump_time) <= 0 || gravity_time != 0;
 }
-
 void Player::render(sf::RenderTarget &target)
 {
     target.draw(sprite);
@@ -150,7 +144,6 @@ int Player::collosionType(sf::Sprite target, int direction)
     else
         return SIDES;
 }
-
 void Player::undo_move(int direction)
 {
     if (direction == LEFT)
@@ -162,7 +155,6 @@ void Player::undo_move(int direction)
     else if (direction == UP)
         move(0.f, -1.f);
 }
-
 std::pair<int, double> Player::vertical_collosion_time(sf::Sprite target)
 {
     std::pair<int, double> collosion_info;
@@ -184,7 +176,6 @@ std::pair<int, double> Player::vertical_collosion_time(sf::Sprite target)
     }
     return collosion_info;
 }
-
 double Player::collosion_time_solver(double distance)
 {
     double delta = pow(jump_speed, 2) + (2 * ACCELERATION * distance);
@@ -203,7 +194,6 @@ double Player::collosion_time_solver(double distance)
         return std::min(answer1, answer2);
     }
 }
-
 std::pair<int, double> Player::horizental_collosion_time(sf::Sprite target)
 {
     std::pair<int, double> collosion_info;
