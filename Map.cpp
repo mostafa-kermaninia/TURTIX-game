@@ -56,12 +56,10 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
 
     else if (object_char == JAILED_BABY)
     {
-        BabyTurtle *new_turtle = new BabyTurtle(ground);
         new_sp.setTexture(textures[JAILED_BABY_INDEX]);
         new_sp.scale(0.1f, 0.1f);
         new_sp.move(initMoves(x_pos, y_pos));
-        new_turtle->set_texture(new_sp);
-        babies.push_back(new_turtle);
+        babies_texture.push_back(new_sp);
     }
 
     else if (object_char == STAR)
@@ -105,6 +103,16 @@ void Map::initSprites(char object_char, int y_pos, int x_pos)
         blocks.push_back(new_sp);
     }
 }
+void Map::load_baby_turtles()
+{
+    for (auto bt : babies_texture)
+    {
+        BabyTurtle *new_turtle = new BabyTurtle(ground);
+        new_turtle->set_texture(bt);
+        babies.push_back(new_turtle);
+    }
+}
+
 void Map::load_map(int mapCode)
 {
     int num_of_line = 0;
@@ -119,13 +127,14 @@ void Map::load_map(int mapCode)
             initSprites(line[i], num_of_line, i);
         }
     }
+    load_baby_turtles();
 }
 void Map::moveToPos(int xMove, int yMove, sf::Sprite &sprite)
 {
     sprite.move(xMove, yMove);
 }
 
-Map::Map(sf::Sprite world,int mapCode)
+Map::Map(sf::Sprite world, int mapCode)
 {
     world_background = world;
     initTexture();
@@ -227,21 +236,15 @@ void Map::render(sf::RenderTarget &target)
         {
             babies[i]->go_back();
         }
-        for (auto b : blocks)
-        {
-            if (babies[i]->collided(b))
-            {
-                babies[i]->go_back();
-            }
-        }
         babies[i]->is_on_ground = false;
+        babies[i]->get_sprite()->move(0, ACCELERATION * babies[i]->fallTime);
         for (auto g : ground)
         {
             if (babies[i]->collided(g))
             {
                 babies[i]->is_on_ground = true;
                 babies[i]->moveBack();
-                babies[i]->fallTime = 0;
+                babies[i]->fallTime = 1;
             }
         }
         if (babies[i]->is_on_ground == false)

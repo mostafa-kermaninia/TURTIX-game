@@ -5,6 +5,7 @@
 // constructor and distructor
 BabyTurtle::BabyTurtle(std::vector<sf::Sprite> gParts)
 {
+    fallTime = 1;
     speed = 1.f;
     direction = RIGHT;
     is_free = false;

@@ -26,6 +26,8 @@ void Player::initSprite()
 
 Player::Player()
 {
+    diamond_counter = 0;
+    star_counter = 0;
     is_immortal_now = false;
     immortal_time_counter = 0;
     gravity_time = 0;
@@ -81,6 +83,15 @@ void Player::move(const float dirX, const float dirY)
 {
     sprite.move(movement_speed * dirX, movement_speed * dirY);
 }
+
+void Player::side_move()
+{
+    if (player_dir == RIGHT)
+        move(-1.0f, 0.f);
+    else
+        move(1.0f, 0.f);
+}
+
 void Player::jump(const float dirX, const float dirY)
 {
     sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time) * dirY);
@@ -98,14 +109,19 @@ void Player::undo_jump(const float dirX, const float dirY)
 void Player::update_score(std::string reward_name)
 {
     if (reward_name == "star")
+    {
+        star_counter++;
         score += STAR_SCORE;
+    }
     else if (reward_name == "diamond")
+    {
+        diamond_counter++;
         score += DIAMOND_SCORE;
+    }
 }
 void Player::update_health()
 {
     health--;
-    // sprite.setPosition(50.f, 1940.f);
 }
 void Player::goBack()
 {

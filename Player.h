@@ -46,7 +46,8 @@ private:
     float movement_speed;
     float jump_speed;
     int player_dir;
-
+    int diamond_counter;
+    int star_counter;
     int immortal_time_counter;
     int jump_time;
     int gravity_time;
@@ -73,6 +74,7 @@ public:
         return sprite.getPosition();
     }
 
+    void go_right();
     void set_jumping_time(int t) { jump_time = t ;}
     bool is_change_time();
     void change_mode();
@@ -80,6 +82,7 @@ public:
     bool is_alive();
     bool is_jumping_finished();
     void move(const float dirX, const float dirY);
+    void side_move();
     void jump(const float dirX, const float dirY);
     void undo_jump(const float dirX, const float dirY);
     bool collided(sf::Sprite target);

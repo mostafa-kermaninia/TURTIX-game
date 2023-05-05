@@ -207,8 +207,8 @@ void Game::run()
             renderGame();
             break;
         case WIN_PAGE_CODE:
-            updateMenu();
             renderMenu();
+            updateMenu();
             break;
             // case LOSE_PAGE_CODE:
             //     updateMenu();
@@ -224,7 +224,7 @@ bool Game::is_in_game()
 }
 void Game::check_end_game()
 {
-    if ((player->collided(map->getPortal()) && map->rescued_all_babies() && is_in_game()) )
+    if ((is_in_game() && player->collided(map->getPortal()) && map->rescued_all_babies()))
     {
         curPage = WIN_PAGE_CODE;
         delete menu;
