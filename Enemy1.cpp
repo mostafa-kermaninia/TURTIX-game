@@ -30,6 +30,15 @@ void Enemy1::move()
     enemy.move(speed * direction, 0);
 }
 
+bool Enemy1::is_on_ground(sf::Sprite ground)
+{
+    bool on_ground = false;
+    enemy.move(50 * direction, 50 * speed);
+    on_ground = collided(ground);
+    enemy.move(-50 * direction, -50 * speed);
+    return on_ground;
+}
+
 void Enemy1::go_back()
 {
     direction *= -1;
@@ -61,7 +70,7 @@ bool Enemy1::is_in_world(sf::Sprite world)
         enemy.getGlobalBounds().left + enemy.getGlobalBounds().width <=
             world.getGlobalBounds().left + world.getGlobalBounds().width &&
         enemy.getGlobalBounds().top + enemy.getGlobalBounds().height <=
-         world.getGlobalBounds().top + world.getGlobalBounds().height)
+            world.getGlobalBounds().top + world.getGlobalBounds().height)
     {
         return true;
     }

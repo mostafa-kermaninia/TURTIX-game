@@ -4,7 +4,7 @@
 void Game::initWindow()
 {
     window = new sf::RenderWindow(sf::VideoMode(WINDOWWIDTH, WINDOWHEIGHT), "GAME SPACEEEE", sf::Style::Close | sf::Style::Titlebar);
-    window->setFramerateLimit(144);
+    window->setFramerateLimit(80);
     window->setVerticalSyncEnabled(false);
 }
 void Game::initMenu()
@@ -57,6 +57,7 @@ bool Game::handleCollisions(int direction)
             if (player->collosionType(f_enemies[i]->get_sprite(), direction) == DOWN)
             {
                 map->remove_object("Enemy1", i);
+                player->undo_move(DOWN);
                 player->set_jumping_time(1);
                 player->jump(0.f, -1.f);
             }
@@ -76,6 +77,7 @@ bool Game::handleCollisions(int direction)
             if (player->collosionType(s_enemies[i]->get_sprite(), direction) == DOWN && !s_enemies[i]->is_immortal())
             {
                 map->remove_object("Enemy2", i);
+                player->undo_move(DOWN);
                 player->set_jumping_time(1);
                 player->jump(0.f, -1.f);
             }
@@ -92,7 +94,15 @@ bool Game::handleCollisions(int direction)
     {
         if (player->collided(*babies[i]->get_sprite()) && babies[i]->is_jailed())
         {
-            map->free_baby(i);
+            if (player->collosionType(*babies[i]->get_sprite(), direction) == DOWN)
+            {
+                map->free_baby(i);
+                player->undo_move(DOWN);
+                player->set_jumping_time(1);
+                player->jump(0.f, -1.f);
+            }
+            else
+                player->undo_move((direction + 2) % 4);
         }
     }
     // Collision with stars
@@ -244,17 +254,9 @@ void Game::updateInput()
             player->move(-1.f, 0.f);
         }
     }
-    // pakesh konnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
-    {
-        player->move(0.f, 1.f);
-        canMove = handleCollisions(DOWN);
-        if (!canMove)
-        {
-            player->move(0.f, -1.f);
-        }
-    }
-    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up)) && player->is_jumping_finished()) || !player->is_jumping_finished())
+    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
+             && player->is_on_ground(map->getGround())) 
+            || !player->is_jumping_finished())
     {
         player->jump(0.f, -1.f);
         canMove = handleCollisions(UP);

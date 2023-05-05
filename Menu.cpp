@@ -2,7 +2,7 @@
 
 MainMenu::MainMenu(float width, float height, int menuType)
 {
-    if (!font.loadFromFile("Fonts\\Ignorant.ttf"))
+    if (!font.loadFromFile("Fonts/Ignorant.ttf"))
     {
         // handle Errors
     }

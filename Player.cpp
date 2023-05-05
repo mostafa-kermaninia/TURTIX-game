@@ -17,7 +17,7 @@ void Player::initSprite()
     // Resize sprite
     sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y);
     sprite.scale(0.1f, 0.1f);
-    sprite.move(50, 1640);
+    sprite.move(50, 1940);
 }
 
 Player::Player()
@@ -27,7 +27,7 @@ Player::Player()
     health = INITIAL_HEALTH;
     jump_time = 1;
     movement_speed = 10.f;
-    jump_speed = 10.f;
+    jump_speed = 14.f;
     player_dir = RIGHT;
     initTexture();
     initSprite();
@@ -79,7 +79,7 @@ void Player::update_score(std::string reward_name)
 void Player::update_health()
 {
     health--;
-    sprite.setPosition(50.f, 1640.f);
+    sprite.setPosition(50.f, 1940.f);
 }
 void Player::goBack()
 {
@@ -89,6 +89,25 @@ void Player::goBack()
 void Player::update()
 {
 }
+
+bool Player::is_on_ground(std::vector<sf::Sprite> ground)
+{
+    gravity_time++;
+    move(0, (G_ACCELERATION * gravity_time));
+    bool on_ground = false;
+    for (auto g : ground)
+    {
+        if (collided(g))
+        {
+            on_ground = true;
+            move(0, -(G_ACCELERATION * gravity_time));
+            gravity_time = 0;
+        }
+    }
+    gravity_time--;
+    return on_ground;
+}
+
 void Player::gravity_effect(std::vector<sf::Sprite> ground)
 {
     if (is_jumping_finished())
@@ -136,24 +155,23 @@ int Player::collosionType(sf::Sprite target, int direction)
     }
     std::pair<int, double> v_time = vertical_collosion_time(target);
     std::pair<int, double> h_time = horizental_collosion_time(target);
-    bool is_fall = is_falling();
-    if (v_time.second > h_time.second && !is_fall)
+    if (v_time.second > h_time.second )
         return h_time.first;
-    else if (v_time.first == DOWN && is_fall)
+    else if (v_time.first == DOWN)
         return DOWN;
     else
         return SIDES;
 }
 void Player::undo_move(int direction)
 {
-    if (direction == LEFT)
+    if (direction == CLOSION_L)
         move(-1.f, 0.f);
     else if (direction == RIGHT)
         move(1.f, 0.f);
     else if (direction == DOWN)
-        move(0.f, 1.f);
+        undo_jump(0.f, 1.f);
     else if (direction == UP)
-        move(0.f, -1.f);
+        undo_jump(0.f, -1.f);
 }
 std::pair<int, double> Player::vertical_collosion_time(sf::Sprite target)
 {
