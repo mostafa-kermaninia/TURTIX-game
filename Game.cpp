@@ -35,6 +35,21 @@ void Game::initView()
 {
     gameView = sf::View((sf::FloatRect(WINDOWWIDTH, WINDOWWIDTH, WINDOWWIDTH, WINDOWHEIGHT)));
 }
+void Game::initScore()
+{
+    font.loadFromFile("Fonts/Premier.ttf");
+    std::vector<sf::Text> finalVec(6);
+    for (int i = 0; i < finalVec.size(); i++)
+    {
+        finalVec[i].setFont(font);
+        finalVec[i].scale(0.8f, 0.8f);
+        finalVec[i].setFillColor(sf::Color::Black);
+        finalVec[i].setFillColor(sf::Color::Magenta);
+        finalVec[i].setOutlineColor(sf::Color::Black);
+        finalVec[i].setOutlineThickness(5.f);
+    }
+    scoreInfo = finalVec;
+}
 void Game::initMap(int mapCode)
 {
     map = new Map(worldBackground, mapCode);
@@ -170,6 +185,7 @@ Game::Game()
     initWorld();
     initView();
     initPlayer();
+    initScore();
 }
 Game::~Game()
 {
@@ -217,7 +233,6 @@ void Game::run()
         }
     }
 }
-
 bool Game::is_in_game()
 {
     return curPage == MAP1_CODE || curPage == MAP2_CODE || curPage == MAP3_CODE;
@@ -312,6 +327,7 @@ void Game::updateGame()
     updatePollEvents();
     updateInput();
     updateView();
+    updateScore();
 }
 void Game::updateMenu()
 {
@@ -439,11 +455,32 @@ void Game::updateMenu()
         }
     }
 }
+void Game::updateScore()
+{
+    scoreInfo[0].setString("DIAMONDS (*10) :");
+    scoreInfo[1].setString(std::to_string(player->get_diamond_count()));
+    scoreInfo[2].setString("STARS (*5) :");
+    scoreInfo[3].setString(std::to_string(player->get_star_count()));
+    scoreInfo[4].setString("TOTAL SCORE :");
+    scoreInfo[5].setString(std::to_string(player->get_total_score()));
+
+    for (int i = 0; i < scoreInfo.size(); i++)
+    {
+        scoreInfo[i].setPosition(window->getView().getCenter().x - window->getView().getSize().x / 2.f + 10.f, window->getView().getCenter().y - window->getView().getSize().y / 2.f + 30 * i + 10.f);
+    }
+}
 void Game::renderMenu()
 {
     window->clear();
     menu->draw(*window, curPage);
     window->display();
+}
+void Game::renderScore()
+{
+    for (auto text : scoreInfo)
+    {
+        window->draw(text);
+    }
 }
 void Game::renderWorld()
 {
@@ -459,6 +496,7 @@ void Game::renderGame()
     // DRAW all things
     map->render(*window);
     player->render(*window);
+    renderScore();
 
     window->display();
 }

@@ -10,9 +10,12 @@ private:
     sf::Event e;
     sf::RenderWindow *window;
     Menu *menu;
+
     // World
     sf::Sprite worldBackground;
     sf::Texture worldBackgroundTexture;
+    sf::Font font;
+    std::vector<sf::Text> scoreInfo;
 
     // // view
     sf::View gameView;
@@ -27,6 +30,7 @@ private:
     void initSounds();
     void initWorld();
     void initView();
+    void initScore();
     void initMap(int mapCode);
     void initPlayer();
     bool is_in_game();
@@ -45,7 +49,9 @@ public:
     void updateView();
     void updateGame();
     void updateMenu();
+    void updateScore();
     void renderWorld();
     void renderGame();
     void renderMenu();
+    void renderScore();
 };
