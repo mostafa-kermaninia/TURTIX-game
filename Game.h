@@ -29,6 +29,7 @@ private:
     void initView();
     void initMap(int mapCode);
     void initPlayer();
+    bool is_in_game();
     bool handleCollisions(int direction);
 
 public:
@@ -38,7 +39,7 @@ public:
     int curPage;
     // FUNCS
     void run();
-    bool is_done();
+    void check_end_game();
     void updatePollEvents();
     void updateInput();
     void updateView();

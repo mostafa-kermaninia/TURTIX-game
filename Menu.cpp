@@ -2,24 +2,34 @@
 
 Menu::Menu(float width, float height, int menuCode)
 {
-    if (!font.loadFromFile("Fonts/Ignorant.ttf"))
+    initFont();
+    switch (menuCode)
     {
-        std::cerr << "COULDN'T READ FONT!\n";
-    }
-
-    if (menuCode == MAIN_MENU_CODE)
-    {
+    case MAIN_MENU_CODE:
         initMainMenu(width, height);
-    }
-    else if (menuCode == MAP_LIST_CODE)
-    {
+        break;
+    case MAP_LIST_CODE:
         initListMenu(width, height);
+        break;
+    case WIN_PAGE_CODE:
+        initWinPage(width, height);
+        break;
+    // case LOSE_PAGE_CODE:
+    //     initLosePage(width, height);
+    //     break;
     }
 }
 Menu::~Menu()
 {
 }
 
+void Menu::initFont()
+{
+    if (!font.loadFromFile("Fonts/Ignorant.ttf"))
+    {
+        std::cerr << "COULDN'T READ FONT!\n";
+    }
+}
 void Menu::initMainMenu(float width, float height)
 {
     menu[START_INDEX].setFont(font);
@@ -82,26 +92,73 @@ void Menu::initListMenu(float width, float height)
     listBackground.scale(0.8f, 0.8f);
     listBackground.move(-30, 0);
 }
+void Menu::initWinPage(float width, float height)
+{
+    // LOAD TEXTURE FROM FILE
+    if (!winPageTexture.loadFromFile("Textures/WinGame.png"))
+    {
+        std::cout << "ERROR::PLAYER::INITTEXTURE:: FILE RO NASHOD BEKHUNAMMMM!!! " << std::endl;
+    }
+    winPageBackground.setTexture(winPageTexture);
+    winPageBackground.scale(1.2f, 1.2f);
+    winPageBackground.setPosition(sf::Vector2f(0.0f, 0.0f));
+    winPageBackground.move(-70.f, 0);
+}
+void Menu::initLosePage(float width, float height)
+{
+    // LOAD TEXTURE FROM FILE
+    if (!losePageTexture.loadFromFile("Textures/LoseGame.png"))
+    {
+        std::cout << "ERROR::PLAYER::INITTEXTURE:: FILE RO NASHOD BEKHUNAMMMM!!! " << std::endl;
+    }
+    losePageBackground.setTexture(losePageTexture);
+    losePageBackground.scale(1.2f, 1.2f);
+    losePageBackground.setPosition(sf::Vector2f(0.0f, 0.0f));
+
+    losePageBackground.move(-70.f, 800.f);
+}
+
+std::vector<sf::Text> Menu::getMenu()
+{
+    int n = sizeof(menu) / sizeof(menu[0]);
+
+    std::vector<sf::Text> res(menu, menu + n);
+    return res;
+}
+std::vector<sf::Text> Menu::getList()
+{
+    int n = sizeof(list) / sizeof(list[0]);
+
+    std::vector<sf::Text> res(list, list + n);
+    return res;
+}
+
 void Menu::draw(sf::RenderWindow &window, int curPage)
 {
-    if (curPage == MAIN_MENU_CODE)
+    switch (curPage)
     {
+    case MAIN_MENU_CODE:
         window.draw(mainBackground);
         for (int i = 0; i < NUM_OF_MAIN_ITEMS; i++)
         {
             window.draw(menu[i]);
         }
-    }
-    else if (curPage == MAP_LIST_CODE)
-    {
+        break;
+    case MAP_LIST_CODE:
         window.draw(listBackground);
         for (int i = 0; i < NUM_OF_LIST_ITEMS; i++)
         {
             window.draw(list[i]);
         }
+        break;
+    case WIN_PAGE_CODE:
+        window.draw(winPageBackground);
+        break;
+    // case LOSE_PAGE_CODE:
+    //     window.draw(losePageBackground);
+    //     break;
     }
 }
-
 void Menu::mouseOn(int menuCode, int textIndex)
 {
     if (menuCode == MAIN_MENU_CODE)
