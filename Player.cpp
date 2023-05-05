@@ -4,7 +4,11 @@
 void Player::initTexture()
 {
     // LOAD TEXTURE FROM FILE
-    if (!texture.loadFromFile("Textures/mainChar.png"))
+    if (!mortal_texture.loadFromFile("Textures/mainChar.png"))
+    {
+        std::cout << "ERROR::PLAYER::INITTEXTURE:: FILE RO NASHOD BEKHUNAMMMM!!! " << std::endl;
+    }
+    if (!immortal_texture.loadFromFile("Textures/immortalMainChar.png"))
     {
         std::cout << "ERROR::PLAYER::INITTEXTURE:: FILE RO NASHOD BEKHUNAMMMM!!! " << std::endl;
     }
@@ -12,16 +16,18 @@ void Player::initTexture()
 void Player::initSprite()
 {
     // SET TEXTURE TO SPRITE
-    sprite.setTexture(texture);
+    sprite.setTexture(mortal_texture);
 
     // Resize sprite
-    sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y);
+    sprite.setOrigin(mortal_texture.getSize().x / 2.f, mortal_texture.getSize().y);
     sprite.scale(0.1f, 0.1f);
     sprite.move(50, 1940);
 }
 
 Player::Player()
 {
+    is_immortal_now = false;
+    immortal_time_counter = 0;
     gravity_time = 0;
     score = 0;
     health = INITIAL_HEALTH;
@@ -51,6 +57,26 @@ bool Player::is_alive()
 {
     return health > 0;
 }
+bool Player::is_change_time()
+{
+    immortal_time_counter++;
+    return (immortal_time_counter == IMMORTAL_TIME && is_immortal_now);
+}
+
+void Player::change_mode()
+{
+    if (is_immortal_now)
+        sprite.setTexture(mortal_texture);
+    else
+        sprite.setTexture(immortal_texture);
+    immortal_time_counter = 0;
+    is_immortal_now = !is_immortal_now;
+}
+
+bool Player::is_immortal()
+{
+    return is_immortal_now;
+}
 void Player::move(const float dirX, const float dirY)
 {
     sprite.move(movement_speed * dirX, movement_speed * dirY);
@@ -79,7 +105,7 @@ void Player::update_score(std::string reward_name)
 void Player::update_health()
 {
     health--;
-    sprite.setPosition(50.f, 1940.f);
+    // sprite.setPosition(50.f, 1940.f);
 }
 void Player::goBack()
 {
@@ -155,7 +181,7 @@ int Player::collosionType(sf::Sprite target, int direction)
     }
     std::pair<int, double> v_time = vertical_collosion_time(target);
     std::pair<int, double> h_time = horizental_collosion_time(target);
-    if (v_time.second > h_time.second )
+    if (v_time.second > h_time.second)
         return h_time.first;
     else if (v_time.first == DOWN)
         return DOWN;

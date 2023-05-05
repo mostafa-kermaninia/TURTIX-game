@@ -3,9 +3,11 @@
 #include "Map.h"
 #include "Menu.h"
 
+
 class Game
 {
 private:
+    sf::Event e;
     sf::RenderWindow *window;
     Menu *menu;
     // World

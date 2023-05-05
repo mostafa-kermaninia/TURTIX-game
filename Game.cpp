@@ -49,7 +49,7 @@ bool Game::handleCollisions(int direction)
     std::vector<Enemy1 *> f_enemies = map->getFEnemies();
     for (int i = 0; i < f_enemies.size(); i++)
     {
-        if (player->collided(f_enemies[i]->get_sprite()))
+        if (!player->is_immortal() && player->collided(f_enemies[i]->get_sprite()))
         {
             if (player->collosionType(f_enemies[i]->get_sprite(), direction) == DOWN)
             {
@@ -60,7 +60,9 @@ bool Game::handleCollisions(int direction)
             }
             else
             {
+                player->change_mode();
                 player->update_health();
+                player->jump(0.f, -1.f);
             }
             break;
         }
@@ -69,7 +71,7 @@ bool Game::handleCollisions(int direction)
     std::vector<Enemy2 *> s_enemies = map->getSEnemies();
     for (int i = 0; i < s_enemies.size(); i++)
     {
-        if (player->collided(s_enemies[i]->get_sprite()))
+        if (!player->is_immortal() && player->collided(s_enemies[i]->get_sprite()))
         {
             if (player->collosionType(s_enemies[i]->get_sprite(), direction) == DOWN && !s_enemies[i]->is_immortal())
             {
@@ -80,7 +82,9 @@ bool Game::handleCollisions(int direction)
             }
             else
             {
+                player->change_mode();
                 player->update_health();
+                player->jump(0.f, -1.f);
             }
             break;
         }
@@ -89,7 +93,7 @@ bool Game::handleCollisions(int direction)
     std::vector<BabyTurtle *> babies = map->getJailedBabies();
     for (int i = 0; i < babies.size(); i++)
     {
-        if (player->collided(*babies[i]->get_sprite()) && babies[i]->is_jailed())
+        if (!player->is_immortal() && player->collided(*babies[i]->get_sprite()) && babies[i]->is_jailed())
         {
             if (player->collosionType(*babies[i]->get_sprite(), direction) == DOWN)
             {
@@ -241,6 +245,8 @@ void Game::updatePollEvents()
 }
 void Game::updateInput()
 {
+    if (player->is_change_time())
+        player->change_mode();
     player->gravity_effect(map->getGround());
     handleCollisions(NO_MOVE);
     // Move Player
@@ -459,6 +465,7 @@ void Game::renderWorld()
     window->draw(worldBackground);
 }
 void Game::renderGame()
+
 {
     window->clear();
     // Draw world
