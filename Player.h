@@ -20,13 +20,13 @@
 #define ERROR -1
 
 
-
 const double ACCELERATION = 0.25;
 const double G_ACCELERATION = 0.01;
-const int JUMP_DURATION = 58;
+const int JUMP_DURATION = 56;
 const int INITIAL_HEALTH = 3;
 const int STAR_SCORE = 5;
 const int DIAMOND_SCORE = 10;
+const int IMMORTAL_TIME = 300;
 
 enum INDEX
 {
@@ -39,17 +39,20 @@ enum INDEX
 class Player
 {
 private:
-    sf::Texture texture;
+    sf::Texture mortal_texture;
+    sf::Texture immortal_texture;
     sf::Sprite sprite;
 
     float movement_speed;
     float jump_speed;
     int player_dir;
 
+    int immortal_time_counter;
     int jump_time;
     int gravity_time;
     int health;
     int score;
+    bool is_immortal_now;
     // PRIVATE FUNCS
     void initTexture();
     void initSprite();
@@ -71,6 +74,9 @@ public:
     }
 
     void set_jumping_time(int t) { jump_time = t ;}
+    bool is_change_time();
+    void change_mode();
+    bool is_immortal();
     bool is_alive();
     bool is_jumping_finished();
     void move(const float dirX, const float dirY);

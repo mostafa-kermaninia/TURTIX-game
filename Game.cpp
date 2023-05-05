@@ -9,7 +9,7 @@ void Game::initWindow()
 }
 void Game::initMenu()
 {
-    menu = new Menu(window->getSize().x, window->getSize().y);
+    mainMenu = new MainMenu(window->getSize().x, window->getSize().y, curPage);
 }
 void Game::initSounds()
 {
@@ -52,7 +52,7 @@ bool Game::handleCollisions(int direction)
     std::vector<Enemy1 *> f_enemies = map->getFEnemies();
     for (int i = 0; i < f_enemies.size(); i++)
     {
-        if (player->collided(f_enemies[i]->get_sprite()))
+        if (!player->is_immortal() && player->collided(f_enemies[i]->get_sprite()))
         {
             if (player->collosionType(f_enemies[i]->get_sprite(), direction) == DOWN)
             {
@@ -63,7 +63,9 @@ bool Game::handleCollisions(int direction)
             }
             else
             {
+                player->change_mode();
                 player->update_health();
+                player->jump(0.f, -1.f);
             }
             break;
         }
@@ -72,7 +74,7 @@ bool Game::handleCollisions(int direction)
     std::vector<Enemy2 *> s_enemies = map->getSEnemies();
     for (int i = 0; i < s_enemies.size(); i++)
     {
-        if (player->collided(s_enemies[i]->get_sprite()))
+        if (!player->is_immortal() && player->collided(s_enemies[i]->get_sprite()))
         {
             if (player->collosionType(s_enemies[i]->get_sprite(), direction) == DOWN && !s_enemies[i]->is_immortal())
             {
@@ -83,7 +85,9 @@ bool Game::handleCollisions(int direction)
             }
             else
             {
+                player->change_mode();
                 player->update_health();
+                player->jump(0.f, -1.f);
             }
             break;
         }
@@ -92,7 +96,7 @@ bool Game::handleCollisions(int direction)
     std::vector<BabyTurtle *> babies = map->getJailedBabies();
     for (int i = 0; i < babies.size(); i++)
     {
-        if (player->collided(*babies[i]->get_sprite()) && babies[i]->is_jailed())
+        if (!player->is_immortal() && player->collided(*babies[i]->get_sprite()) && babies[i]->is_jailed())
         {
             if (player->collosionType(*babies[i]->get_sprite(), direction) == DOWN)
             {
@@ -163,6 +167,7 @@ bool Game::handleCollisions(int direction)
 Game::Game()
 {
     canPlay = false;
+    curPage = MAIN_MENU_CODE;
     initWindow();
     initMenu();
     initWorld();
@@ -182,20 +187,21 @@ void Game::run()
 {
     while (window->isOpen() && !is_done())
     {
-        // while (!canPlay)
-        // {
-        //     menu->draw(*window);
-        // }
+        while (!canPlay)
+        {
+            updateMenu();
+            renderMenu();
+        }
 
-        update();
-        render();
+        updateGame();
+        renderGame();
     }
 }
 bool Game::is_done()
 {
     if (player->collided(map->getPortal()) && map->rescued_all_babies())
     {
-        std::cout << "bordiiiii\n";
+        // std::cout << "bordiiiii\n";
         return true;
     }
     else if (!player->is_alive())
@@ -207,7 +213,19 @@ bool Game::is_done()
 }
 void Game::updatePollEvents()
 {
-    sf::Event e;
+    if (!player->is_jumping_finished())
+    {
+        player->jump(0.f, -1.f);
+        bool canMove = handleCollisions(UP);
+        if (!canMove)
+        {
+            player->undo_jump(0.f, 1.f);
+        }
+    }
+    if (player->is_change_time())
+        player->change_mode();
+    player->gravity_effect(map->getGround());
+    handleCollisions(NO_MOVE);
     while (window->pollEvent(e))
     {
         if (e.Event::type == sf::Event::Closed)
@@ -218,15 +236,22 @@ void Game::updatePollEvents()
         {
             window->close();
         }
+        updateInput();
     }
 }
 void Game::updateInput()
 {
-    player->gravity_effect(map->getGround());
-    handleCollisions(NO_MOVE);
-    // Move Player
     bool canMove = true;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
+    if (((e.type == sf::Event::KeyPressed && (e.key.code == sf::Keyboard::W || e.key.code == sf::Keyboard::Up)) && player->is_on_ground(map->getGround())) || !player->is_jumping_finished())
+    {
+        player->jump(0.f, -1.f);
+        canMove = handleCollisions(UP);
+        if (!canMove)
+        {
+            player->undo_jump(0.f, 1.f);
+        }
+    }
+    if (e.type == sf::Event::KeyPressed && (e.key.code == sf::Keyboard::A || e.key.code == sf::Keyboard::Left))
     {
         if (player->getDir() == RIGHT)
         {
@@ -239,7 +264,7 @@ void Game::updateInput()
             player->move(1.f, 0.f);
         }
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+    if (e.type == sf::Event::KeyPressed && (e.key.code == sf::Keyboard::D || e.key.code == sf::Keyboard::Right))
     {
         if (player->getDir() == LEFT)
         {
@@ -250,17 +275,6 @@ void Game::updateInput()
         if (!canMove)
         {
             player->move(-1.f, 0.f);
-        }
-    }
-    if (((sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
-             && player->is_on_ground(map->getGround())) 
-            || !player->is_jumping_finished())
-    {
-        player->jump(0.f, -1.f);
-        canMove = handleCollisions(UP);
-        if (!canMove)
-        {
-            player->undo_jump(0.f, 1.f);
         }
     }
 }
@@ -274,23 +288,89 @@ void Game::updateView()
     y = std::max(y, worldBackground.getGlobalBounds().top + WINDOWHEIGHT / 2.f);
     gameView.setCenter(x, y);
 }
-void Game::update()
+void Game::updateGame()
 {
     updatePollEvents();
-    updateInput();
+    // updateInput();
     updateView();
+}
+void Game::updateMenu()
+{
+    sf::Event event;
+    while (window->pollEvent(event))
+    {
+        if (event.type == sf::Event::Closed)
+        {
+            window->close();
+        }
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Escape)
+            {
+                window->close();
+            }
+            else if (event.key.code == sf::Keyboard::Up)
+            {
+                mainMenu->moveUp(curPage);
+            }
+            else if (event.key.code == sf::Keyboard::Down)
+            {
+                mainMenu->moveDown(curPage);
+            }
+            else if (event.key.code == sf::Keyboard::Return || event.key.code == sf::Keyboard::Space)
+            {
+                if (curPage == MAIN_MENU_CODE)
+                {
+                    if (mainMenu->getPressedItem() == START_INDEX)
+                    {
+                        curPage = MAP_LIST_CODE;
+                        delete mainMenu;
+
+                        mainMenu = new MainMenu(window->getSize().x, window->getSize().y, curPage);
+                    }
+                    else if (mainMenu->getPressedItem() == EXIT_INDEX)
+                    {
+                        window->close();
+                    }
+                }
+                else if (curPage == MAP_LIST_CODE)
+                {
+                    if (mainMenu->getPressedItem() == MAP1_INDEX)
+                    {
+                        canPlay = true;
+                    }
+                    else if (mainMenu->getPressedItem() == MAP2_INDEX)
+                    {
+                        canPlay = true;
+                    }
+                    else if (mainMenu->getPressedItem() == MAP3_INDEX)
+                    {
+                        canPlay = true;
+                    }
+                    else if (mainMenu->getPressedItem() == GO_BACK_INDEX)
+                    {
+                        curPage = MAIN_MENU_CODE;
+                        delete mainMenu;
+                        mainMenu = new MainMenu(window->getSize().x, window->getSize().y, curPage);
+                    }
+                }
+            }
+        }
+    }
 }
 void Game::renderMenu()
 {
-    menu->draw(*window);
+    window->clear();
+    mainMenu->draw(*window, curPage);
+    window->display();
 }
 void Game::renderWorld()
 {
     window->draw(worldBackground);
 }
-void Game::render()
+void Game::renderGame()
 {
-    window->clear(sf::Color::Cyan);
+    window->clear();
     // Draw world
     renderWorld();
     // set view

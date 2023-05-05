@@ -4,7 +4,11 @@
 void Player::initTexture()
 {
     // LOAD TEXTURE FROM FILE
-    if (!texture.loadFromFile("Textures/mainChar.png"))
+    if (!mortal_texture.loadFromFile("Textures/mainChar.png"))
+    {
+        std::cout << "ERROR::PLAYER::INITTEXTURE:: FILE RO NASHOD BEKHUNAMMMM!!! " << std::endl;
+    }
+    if (!immortal_texture.loadFromFile("Textures/immortalMainChar.png"))
     {
         std::cout << "ERROR::PLAYER::INITTEXTURE:: FILE RO NASHOD BEKHUNAMMMM!!! " << std::endl;
     }
@@ -12,21 +16,23 @@ void Player::initTexture()
 void Player::initSprite()
 {
     // SET TEXTURE TO SPRITE
-    sprite.setTexture(texture);
+    sprite.setTexture(mortal_texture);
 
     // Resize sprite
-    sprite.setOrigin(texture.getSize().x / 2.f, texture.getSize().y);
+    sprite.setOrigin(mortal_texture.getSize().x / 2.f, mortal_texture.getSize().y);
     sprite.scale(0.1f, 0.1f);
     sprite.move(50, 1940);
 }
 
 Player::Player()
 {
+    is_immortal_now = false;
+    immortal_time_counter = 0;
     gravity_time = 0;
     score = 0;
     health = INITIAL_HEALTH;
     jump_time = 1;
-    movement_speed = 10.f;
+    movement_speed = 20.f;
     jump_speed = 14.f;
     player_dir = RIGHT;
     initTexture();
@@ -47,17 +53,37 @@ bool Player::is_jumping_finished()
     }
     return false;
 }
-
 bool Player::is_alive()
 {
     return health > 0;
 }
-
-void Player::move(const float dirX, const float dirY)
+bool Player::is_change_time()
 {
-    sprite.move(movement_speed * dirX, movement_speed * dirY);
+    immortal_time_counter++;
+    return (immortal_time_counter == IMMORTAL_TIME && is_immortal_now);
 }
 
+void Player::change_mode()
+{
+    if (is_immortal_now)
+        sprite.setTexture(mortal_texture);
+    else
+        sprite.setTexture(immortal_texture);
+    immortal_time_counter = 0;
+    is_immortal_now = !is_immortal_now;
+}
+
+bool Player::is_immortal()
+{
+    return is_immortal_now;
+}
+void Player::move(const float dirX, const float dirY)
+{
+    if (!is_jumping_finished())
+        sprite.move(movement_speed * 2 * dirX, movement_speed * 2 * dirY);
+    else
+        sprite.move(movement_speed * dirX, movement_speed * dirY);
+}
 void Player::jump(const float dirX, const float dirY)
 {
     sprite.move(movement_speed * dirX, (jump_speed - ACCELERATION * jump_time) * dirY);
@@ -82,7 +108,7 @@ void Player::update_score(std::string reward_name)
 void Player::update_health()
 {
     health--;
-    sprite.setPosition(50.f, 1940.f);
+    // sprite.setPosition(50.f, 1940.f);
 }
 void Player::goBack()
 {
@@ -129,12 +155,10 @@ void Player::gravity_effect(std::vector<sf::Sprite> ground)
         }
     }
 }
-
 bool Player::is_falling()
 {
     return (jump_speed - ACCELERATION * jump_time) <= 0 || gravity_time != 0;
 }
-
 void Player::render(sf::RenderTarget &target)
 {
     target.draw(sprite);
@@ -160,14 +184,13 @@ int Player::collosionType(sf::Sprite target, int direction)
     }
     std::pair<int, double> v_time = vertical_collosion_time(target);
     std::pair<int, double> h_time = horizental_collosion_time(target);
-    if (v_time.second > h_time.second )
+    if (v_time.second > h_time.second)
         return h_time.first;
     else if (v_time.first == DOWN)
         return DOWN;
     else
         return SIDES;
 }
-
 void Player::undo_move(int direction)
 {
     if (direction == CLOSION_L)
@@ -179,7 +202,6 @@ void Player::undo_move(int direction)
     else if (direction == UP)
         undo_jump(0.f, -1.f);
 }
-
 std::pair<int, double> Player::vertical_collosion_time(sf::Sprite target)
 {
     std::pair<int, double> collosion_info;
@@ -201,7 +223,6 @@ std::pair<int, double> Player::vertical_collosion_time(sf::Sprite target)
     }
     return collosion_info;
 }
-
 double Player::collosion_time_solver(double distance)
 {
     double delta = pow(jump_speed, 2) + (2 * ACCELERATION * distance);
@@ -220,7 +241,6 @@ double Player::collosion_time_solver(double distance)
         return std::min(answer1, answer2);
     }
 }
-
 std::pair<int, double> Player::horizental_collosion_time(sf::Sprite target)
 {
     std::pair<int, double> collosion_info;

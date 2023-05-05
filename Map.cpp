@@ -109,7 +109,7 @@ void Map::load_map()
 {
     int num_of_line = 0;
     std::fstream map_file;
-    map_file.open(maps[1]);
+    map_file.open(maps[2]);
     std::string line;
     while (getline(map_file, line))
     {
