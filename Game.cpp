@@ -6,6 +6,7 @@ void Game::initWindow()
     window = new sf::RenderWindow(sf::VideoMode(WINDOWWIDTH, WINDOWHEIGHT), "GAME SPACEEEE", sf::Style::Close | sf::Style::Titlebar);
     window->setFramerateLimit(80);
     window->setVerticalSyncEnabled(false);
+    default_view = window->getDefaultView();
 }
 void Game::initMenu()
 {
@@ -223,16 +224,19 @@ void Game::run()
             renderGame();
             break;
         case WIN_PAGE_CODE:
+            window->setView(default_view);
             renderMenu();
             updateMenu();
             break;
-            // case LOSE_PAGE_CODE:
-            //     updateMenu();
-            //     renderMenu();
-            //     break;
+        case LOSE_PAGE_CODE:
+            window->setView(default_view);
+            updateMenu();
+            renderMenu();
+            break;
         }
     }
 }
+
 bool Game::is_in_game()
 {
     return curPage == MAP1_CODE || curPage == MAP2_CODE || curPage == MAP3_CODE;
@@ -245,13 +249,13 @@ void Game::check_end_game()
         delete menu;
         menu = new Menu(window->getSize().x, window->getSize().y, curPage);
     }
-    // else if (!player->is_alive() && is_in_game())
-    // {
-    //     // curPage = WIN_PAGE_CODE;
-    //     curPage = LOSE_PAGE_CODE;
-    //     delete menu;
-    //     menu = new Menu(window->getSize().x, window->getSize().y, curPage);
-    // }
+    else if (!player->is_alive() && is_in_game())
+    {
+        // curPage = WIN_PAGE_CODE;
+        curPage = LOSE_PAGE_CODE;
+        delete menu;
+        menu = new Menu(window->getPosition().x, window->getPosition().y, curPage);
+    }
 }
 void Game::updatePollEvents()
 {
@@ -444,13 +448,90 @@ void Game::updateMenu()
                 menu = new Menu(window->getSize().x, window->getSize().y, curPage);
                 break;
             }
-                // case LOSE_PAGE_CODE:
-                // {
-                //     curPage = MAP_LIST_CODE;
-                //     delete menu;
-                //     menu = new Menu(window->getSize().x, window->getSize().y, curPage);
-                //     break;
-                // }
+            case LOSE_PAGE_CODE:
+            {
+                curPage = MAP_LIST_CODE;
+                delete menu;
+                menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                break;
+            }
+            }
+        }
+        if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+        {
+            int selected = DEFAULT;
+            switch (curPage)
+            {
+            case MAIN_MENU_CODE:
+            {
+                for (int i = 0; i < menu->getMenu().size(); i++)
+                {
+                    if (menu->getMenu()[i].getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y))
+                    {
+                        selected = i;
+                    }
+                }
+
+                if (selected == START_INDEX)
+                {
+                    curPage = MAP_LIST_CODE;
+
+                    delete menu;
+                    menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                }
+                else if (selected == EXIT_INDEX)
+                {
+                    window->close();
+                }
+                break;
+            }
+            case MAP_LIST_CODE:
+            {
+                for (int i = 0; i < menu->getList().size(); i++)
+                {
+                    if (menu->getList()[i].getGlobalBounds().contains(sf::Mouse::getPosition(*window).x, sf::Mouse::getPosition(*window).y))
+                    {
+                        selected = i;
+                    }
+                }
+
+                if (selected == MAP1_INDEX)
+                {
+                    curPage = MAP1_CODE;
+                    initMap(MAP1_CODE);
+                }
+                else if (selected == MAP2_INDEX)
+                {
+                    curPage = MAP2_CODE;
+                    initMap(MAP2_CODE);
+                }
+                else if (selected == MAP3_INDEX)
+                {
+                    curPage = MAP3_CODE;
+                    initMap(MAP3_CODE);
+                }
+                else if (selected == GO_BACK_INDEX)
+                {
+                    curPage = MAIN_MENU_CODE;
+                    delete menu;
+                    menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                }
+                break;
+            }
+            case WIN_PAGE_CODE:
+            {
+                curPage = MAP_LIST_CODE;
+                delete menu;
+                menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                break;
+            }
+            case LOSE_PAGE_CODE:
+            {
+                curPage = MAP_LIST_CODE;
+                delete menu;
+                menu = new Menu(window->getSize().x, window->getSize().y, curPage);
+                break;
+            }
             }
         }
     }

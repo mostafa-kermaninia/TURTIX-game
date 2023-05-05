@@ -7,10 +7,10 @@
 class Game
 {
 private:
+    sf::View default_view;
     sf::Event e;
     sf::RenderWindow *window;
     Menu *menu;
-
     // World
     sf::Sprite worldBackground;
     sf::Texture worldBackgroundTexture;

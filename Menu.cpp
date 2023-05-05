@@ -14,9 +14,9 @@ Menu::Menu(float width, float height, int menuCode)
     case WIN_PAGE_CODE:
         initWinPage(width, height);
         break;
-    // case LOSE_PAGE_CODE:
-    //     initLosePage(width, height);
-    //     break;
+    case LOSE_PAGE_CODE:
+        initLosePage(width, height);
+        break;
     }
 }
 Menu::~Menu()
@@ -102,7 +102,7 @@ void Menu::initWinPage(float width, float height)
     winPageBackground.setTexture(winPageTexture);
     winPageBackground.scale(1.2f, 1.2f);
     winPageBackground.setPosition(sf::Vector2f(0.0f, 0.0f));
-    winPageBackground.move(-70.f, 0);
+    winPageBackground.move(-70.f, 0.f);
 }
 void Menu::initLosePage(float width, float height)
 {
@@ -112,10 +112,10 @@ void Menu::initLosePage(float width, float height)
         std::cout << "ERROR::PLAYER::INITTEXTURE:: FILE RO NASHOD BEKHUNAMMMM!!! " << std::endl;
     }
     losePageBackground.setTexture(losePageTexture);
-    losePageBackground.scale(1.2f, 1.2f);
-    losePageBackground.setPosition(sf::Vector2f(0.0f, 0.0f));
+    losePageBackground.scale(1.f, 1.f);
+    losePageBackground.setPosition(65, 60);
 
-    losePageBackground.move(-70.f, 800.f);
+    losePageBackground.move(-70.f, 0.f);
 }
 
 std::vector<sf::Text> Menu::getMenu()
@@ -154,9 +154,9 @@ void Menu::draw(sf::RenderWindow &window, int curPage)
     case WIN_PAGE_CODE:
         window.draw(winPageBackground);
         break;
-    // case LOSE_PAGE_CODE:
-    //     window.draw(losePageBackground);
-    //     break;
+    case LOSE_PAGE_CODE:
+        window.draw(losePageBackground);
+        break;
     }
 }
 void Menu::mouseOn(int menuCode, int textIndex)
